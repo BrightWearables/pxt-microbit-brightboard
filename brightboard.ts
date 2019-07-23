@@ -5,7 +5,7 @@
 
 * Development environment specifics:
 * Written in Microsoft Makecode
-* Tested with a SparkFun gatorlight sensor and micro:bit
+* Tested with a SparkFun brightboard sensor and micro:bit
 *
 * This code is released under the [MIT License](http://opensource.org/licenses/MIT).
 * Please review the LICENSE.md file included with this example. If you have any questions
@@ -15,7 +15,7 @@
 
 
 /**
- * Functions to operate the gatorlight sensor
+ * Functions to operate the brightboard
  */
 
  enum brightBoardType{
@@ -26,9 +26,9 @@
 
 
 //% color=#f44242 icon="\uf185"
-namespace gatorlight {
+namespace brightboard {
 
-    // Functions for reading light from the gatorlight in lux or straight adv value
+    // Functions for reading light from the brightboard in lux or straight adv value
 
     /**
     * Reads the number
@@ -44,7 +44,7 @@ namespace gatorlight {
     }
 
 	/**
-     * Function used for simulator, actual implementation is in gatorlight.cpp
+     * Function used for simulator, actual implementation is in brightboard.cpp
      */
     //% shim=brightboard::getbright
     function getbright(ADCVal: number) {
