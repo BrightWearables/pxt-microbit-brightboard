@@ -1,0 +1,18 @@
+{
+    "name": "brightboard",
+    "version": "0.0.3",
+    "description": "MakeCode extensions for BrightBoard",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*"
+    },
+    "files": [
+        "README.md",
+        "brightboard.ts",
+        "brightboard.cpp",
+        "shims.d.ts",
+        "enums.d.ts"
+    ],
+    "testFiles": [],
+    "public": true
+}
