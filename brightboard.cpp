@@ -34,7 +34,7 @@ namespace brightboard {
 	/**
 	 * Send data down the SPI bus
 	 */
-	 //% blockId=brightboard_dot_star_send_data block = "%brightDisplay|send red"
+	 //% blockId=brightboard_dot_star_send_data block = "send red"
 	void spiDotStarSendData() {
 		SPI* spi = getSPI();
 		// Send zero frame intitially
