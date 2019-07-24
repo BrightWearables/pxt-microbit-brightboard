@@ -66,7 +66,7 @@ namespace brightboard {
 		/**
 		 * initialize the SPI mode
 		 */
-		 //% shim=brightboard::setDotStarSPIMode
+		 //% shim=brightboard::dotStarSPIMode
 		setDotStarSPIMode(bits: number, mode: number):void {
 			// Fake function for simulator
 		}		
