@@ -34,22 +34,22 @@ namespace brightboard {
 	/**
 	 * Send data down the SPI bus
 	 */
-	 //% blockId=brightboard_spiDotStarSendData block = "send red"
+	 //% blockId=brightboard_spiDotStarSendData block="send colors"
 	void spiDotStarSendData() {
 		SPI* spi = getSPI();
 		// Send zero frame intitially
-		for (unsigned i = 0; i < 4; i++) {
+		for (int8_t i = 0; i < 4; i++) {
 			spi->write(0x00);
 		}
 		// Send data for each pixel (red on, green, blue off)
-		for (unsigned i = 0; i < 12; i++) {
+		for (int8_t i = 0; i < 12; i++) {
 			spi->write(0xff); //Brightness on full
 			spi->write(0xff); //Red fully on
 			spi->write(0x00); //Blue/green fully off
 			spi->write(0x00);
 		}
 		// Send end frame
-		for (unsigned i = 0; i < 4; i++) {
+		for (int8_t i = 0; i < 4; i++) {
 			spi->write(0xff);
 		}
 	}
@@ -59,22 +59,22 @@ namespace brightboard {
 	/**
 	 * Send data down the SPI bus
 	 */
-	 //% blockId=brightboard_clear block="%brightDisplay|clear"	
+	 //% blockId=brightboard_clear block="clear display"	
 	void clear() {
 		SPI* spi = getSPI();
 		// Send zero frame intitially
-		for (unsigned i = 0; i < 4; i++) {
+		for (int8_t i = 0; i < 4; i++) {
 			spi->write(0x00);
 		}
 		// Send data for each pixel (red on, green, blue off)
-		for (unsigned i = 0; i < 12; i++) {
+		for (int8_t i = 0; i < 12; i++) {
 			spi->write(0xff); //Brightness on full
 			spi->write(0x00); //Red fully off
 			spi->write(0x00); //Blue/green fully off
 			spi->write(0x00);
 		}
 		// Send end frame
-		for (unsigned i = 0; i < 4; i++) {
+		for (int8_t i = 0; i < 4; i++) {
 			spi->write(0xff);
 		}	
 	}

@@ -16,13 +16,13 @@ declare namespace brightboard {
     /**
      * Send data down the SPI bus
      */
-    //% blockId=brightboard_spiDotStarSendData block = "send red" shim=brightboard::spiDotStarSendData
+    //% blockId=brightboard_spiDotStarSendData block="send colors" shim=brightboard::spiDotStarSendData
     function spiDotStarSendData(): void;
 
     /**
      * Send data down the SPI bus
      */
-    //% blockId=brightboard_clear block="%brightDisplay|clear" shim=brightboard::clear
+    //% blockId=brightboard_clear block="clear display" shim=brightboard::clear
     function clear(): void;
 }
 
