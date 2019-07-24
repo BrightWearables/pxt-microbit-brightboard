@@ -63,13 +63,14 @@ namespace brightboard {
 	 //% shim=brightboard::spiDotStarSendData
 	function spiDotStarSendData():void {
 		// Fake function for simulator
+		return
 	}		
 	
 	
 	/**
 	 * Send colors to the strip (hopefully)
 	 */
-	//%blockId=brightboard_doColors block="send colors" 
+	//%blockId=brightboard_do_colors block="send colors" 
 	export function doColors():void {
 		spiDotStarSendData();
 	}
@@ -81,12 +82,13 @@ namespace brightboard {
 	 //% shim=brightboard::clear
 	function clear():void {
 		// Fake function for simulator
+		return
 	}
 	
 	/**
 	 * clear strip
 	 */
-	//% blockId=brightboard_doClear block="clear"
+	//% blockId=brightboard_do_clear block="clear"
 	export function doClear():void {
 		clear();
 	}
@@ -98,6 +100,7 @@ namespace brightboard {
 	 //% shim=brightboard::dotStarSPIMode
 	function dotStarSPIMode(bits: number, mode: number):void {
 		// Fake function for simulator
+		return
 	}
 
 	/**
@@ -105,7 +108,7 @@ namespace brightboard {
 	 * @param bits bits per write eg:8
 	 * @param mode mode number eg:3
 	 */
-	//% blockId=brightboard_setSPIMode block="SPI bits %bits|and mode %mode"
+	//% blockId=brightboard_set_spi_mode block="SPI bits %bits|and mode %mode"
 	export function setSPIMode(bits: number, mode: number):void {
 		dotStarSPIMode(bits, mode);
 	}				
