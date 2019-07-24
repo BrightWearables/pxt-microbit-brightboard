@@ -58,7 +58,7 @@ namespace brightboard {
 	//% clkPin.fieldEditor="gridpicker" clkPin.fieldOptions.columns=4
     //% clkPin.fieldOptions.tooltips="false" clkPin.fieldOptions.width="250"
 	//% weight=100 blockSetVariable=brightDisplay
-	export function createBoard(dataPin: DigitalPin, clkPin: DigitalPin, numleds: number): BrightBoardDisplay {
+	export function createBoard(dataPin: DigitalPin, clkPin: DigitalPin): BrightBoardDisplay {
 			let brightDisplay = new BrightBoardDisplay();
 			brightDisplay.dataPin = dataPin;
 			brightDisplay.clkPin = clkPin;
