@@ -49,17 +49,21 @@ namespace brightboard {
 		
     /**
 	 * Creates a strip of colored LEDs (APA102)
-	 * @param dataPin data pin eg:4
-	 * @param clkPin clock pin eg:5
+	 * @param dataPin data pin eg:DigitalPin.P15
+	 * @param clkPin clock pin eg:DigitalPin.P13
 	 */
 	//% blockId="brightboard_create_board" block="create brightBoard|data %dataPin|clock %clkPin"
+	//% dataPin.fieldEditor="gridpicker" dataPin.fieldOptions.columns=4
+    //% dataPin.fieldOptions.tooltips="false" dataPin.fieldOptions.width="250"
+	//% clkPin.fieldEditor="gridpicker" clkPin.fieldOptions.columns=4
+    //% clkPin.fieldOptions.tooltips="false" clkPin.fieldOptions.width="250"
 	//% weight=100 blockSetVariable=brightDisplay
 	export function createBoard(dataPin: DigitalPin, clkPin: DigitalPin, numleds: number): BrightBoardDisplay {
 			let brightDisplay = new BrightBoardDisplay();
 			brightDisplay.dataPin = dataPin;
 			brightDisplay.clkPin = clkPin;
 			brightDisplay._length = 12;
-			brightDisplay._stride = 3;
+			brightDisplay._stride = 4;
 			brightDisplay.brightness = 64;
 			brightDisplay.buf = pins.createBuffer(brightDisplay._length * brightDisplay._stride);
 			brightDisplay.start = 0;
@@ -79,7 +83,6 @@ namespace brightboard {
 	/**
 	 * clear the pixel strip
 	 */
-	 //
 	 //% shim=brightboard::spiDotStarSendData
 	function spiDotStarSendData():void {
 		// Fake function for simulator
