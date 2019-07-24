@@ -29,7 +29,7 @@
 namespace brightboard {
 
     // Functions for reading light from the brightboard in lux or straight adv value
-	class BrightBoardDisplay {
+	export class BrightBoardDisplay {
 		
 		buf: Buffer;   //Buffer for pixel data
         dataPin: DigitalPin;
@@ -43,6 +43,33 @@ namespace brightboard {
         start: number;
         _stride: number;  //bits per pixel
         _length: number;  //number of pixels (12)
+		
+		
+		
+		/**
+		 * Get the brightness of the pixel strip.
+		 */
+		//% blockId="brightboard_get_brightness" block="%brightDisplay|brightness"
+		//% weight=7 blockGap=8
+		getBrightness(): number {
+		   return this.brightness;
+		}
+		
+		/**
+		 * clear the pixel strip
+		 */
+		 //% shim=brightboard::spiDotStarSendData
+		spiDotStarSendData():void {
+			// Fake function for simulator
+		}		
+		 
+		/**
+		 * color the pixel strip
+		 */
+		 //% shim=brightboard::clear
+		clear():void {
+			// Fake function for simulator
+		}		
 	}
 	
 	
@@ -71,30 +98,7 @@ namespace brightboard {
 			return brightDisplay;
 	}
 
-    /**
-     * Get the brightness of the pixel strip.
-     */
-    //% blockId="brightboard_get_brightness" block="%brightDisplay|brightness"
-    //% weight=7 blockGap=8
-    export function brightness(): number {
-       return this._brightness;
-    }
-	
-	/**
-	 * clear the pixel strip
-	 */
-	 //% shim=brightboard::spiDotStarSendData
-	function spiDotStarSendData():void {
-		// Fake function for simulator
-	}		
-	 
-	/**
-	 * color the pixel strip
-	 */
-	 //% shim=brightboard::clear
-	function clear():void {
-		// Fake function for simulator
-	}		
+
 
     /**
     * Reads the number
@@ -103,9 +107,9 @@ namespace brightboard {
     export function light(pin: AnalogPin, type: brightBoardType): number{
       let ADCVal = pins.analogReadPin(pin)
       switch(type){
-        case brightBoardType.Lux: return getbright(ADCVal)
-        case brightBoardType.adcVal: return ADCVal
-        default: return -11111111
+        case brightBoardType.Lux: return getbright(ADCVal);
+        case brightBoardType.adcVal: return ADCVal;
+        default: return -11111111;
       }
     }
 
@@ -115,7 +119,7 @@ namespace brightboard {
     //% shim=brightboard::getbright
     function getbright(ADCVal: number) {
         // Fake function for simulator
-        return 0
+        return 0;
     }
 
 }
