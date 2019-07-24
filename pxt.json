@@ -1,6 +1,6 @@
 {
     "name": "brightboard",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "MakeCode extensions for BrightBoard",
     "license": "MIT",
     "dependencies": {
@@ -10,7 +10,7 @@
         "README.md",
         "brightboard.ts",
         "brightboard.cpp",
-		"brightboard.h",
+        "brightboard.h",
         "shims.d.ts",
         "enums.d.ts"
     ],
