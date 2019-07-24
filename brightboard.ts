@@ -69,7 +69,7 @@ namespace brightboard {
 	/**
 	 * Send colors to the strip (hopefully)
 	 */
-	//%blockId=brightboard_doColors block="%brightDisplay|send colors" 
+	//%blockId=brightboard_doColors block="send colors" 
 	export function doColors():void {
 		spiDotStarSendData();
 	}
@@ -86,7 +86,7 @@ namespace brightboard {
 	/**
 	 * clear strip
 	 */
-	//% blockId=brightboard_doClear block="%brightDisplay|clear"
+	//% blockId=brightboard_doClear block="clear"
 	export function doClear():void {
 		clear();
 	}
@@ -105,7 +105,7 @@ namespace brightboard {
 	 * @param bits bits per write eg:8
 	 * @param mode mode number eg:3
 	 */
-	//% blockId=brightboard_setSPIMode block="%brightDisplay|SPI bits %bits|and mode %mode"
+	//% blockId=brightboard_setSPIMode block="SPI bits %bits|and mode %mode"
 	export function setSPIMode(bits: number, mode: number):void {
 		dotStarSPIMode(bits, mode);
 	}				
