@@ -53,62 +53,63 @@ namespace brightboard {
 		//% weight=7 blockGap=8
 		getBrightness(): number {
 		   return this.brightness;
-		}
-		
-		/**
-		 * clear the pixel strip
-		 */
-		 //% shim=brightboard::spiDotStarSendData
-		spiDotStarSendData():void {
-			// Fake function for simulator
 		}		
-		
-		
-		/**
-		 * Send colors to the strip (hopefully)
-		 */
-		//%blockId=brightboard_doColors block="%brightDisplay|send colors" 
-		doColors():void {
-			this.spiDotStarSendData();
-		}
-		
-		 
-		/**
-		 * color the pixel strip
-		 */
-		 //% shim=brightboard::clear
-		clear():void {
-			// Fake function for simulator
-		}
-		
-		/**
-		 * clear strip
-		 */
-		//% blockId=brightboard_doClear block="%brightDisplay|clear"
-		doClear():void {
-			this.clear();
-		}
-		
-		
-		/**
-		 * set the SPI mode
-		 */
-		 //% shim=brightboard::dotStarSPIMode
-		dotStarSPIMode(bits: number, mode: number):void {
-			// Fake function for simulator
-		}
 
-		/**
-		 * initialize the SPI mode
-		 * @param bits bits per write eg:8
-		 * @param mode mode number eg:3
-		 */
-		//% blockId=brightboard_setSPIMode block="%brightDisplay|SPI bits %bits|and mode %mode"
-		setSPIMode(bits: number, mode: number):void {
-			this.dotStarSPIMode(bits, mode);
-		}				
 	}
 	
+	/**
+	 * clear the pixel strip
+	 */
+	 //% shim=brightboard::spiDotStarSendData
+	function spiDotStarSendData():void {
+		// Fake function for simulator
+	}		
+	
+	
+	/**
+	 * Send colors to the strip (hopefully)
+	 */
+	//%blockId=brightboard_doColors block="%brightDisplay|send colors" 
+	export function doColors():void {
+		spiDotStarSendData();
+	}
+	
+	 
+	/**
+	 * color the pixel strip
+	 */
+	 //% shim=brightboard::clear
+	function clear():void {
+		// Fake function for simulator
+	}
+	
+	/**
+	 * clear strip
+	 */
+	//% blockId=brightboard_doClear block="%brightDisplay|clear"
+	export function doClear():void {
+		clear();
+	}
+	
+	
+	/**
+	 * set the SPI mode
+	 */
+	 //% shim=brightboard::dotStarSPIMode
+	function dotStarSPIMode(bits: number, mode: number):void {
+		// Fake function for simulator
+	}
+
+	/**
+	 * initialize the SPI mode
+	 * @param bits bits per write eg:8
+	 * @param mode mode number eg:3
+	 */
+	//% blockId=brightboard_setSPIMode block="%brightDisplay|SPI bits %bits|and mode %mode"
+	export function setSPIMode(bits: number, mode: number):void {
+		dotStarSPIMode(bits, mode);
+	}				
+
 
 		
     /**
