@@ -16,13 +16,11 @@ namespace brightboard {
 
 	/**
 	 * Set SPI mode
-	 * @param bits bits per write eg:8
-	 * @param mode mode number eg:3
 	 */
-	//% blockId=brightboard_dotStarSPIMode block="%brightDisplay|set bits %bits|and mode %mode"
+	 //%
 	void dotStarSPIMode(int bits, int mode) {
-		//spiFormat(8,3);
-		pins::spiFormat(8,0);
+		//pins::spiFormat(8,3);
+		pins::spiFormat(bits,mode);
 	}
 	
 	/**
@@ -36,8 +34,8 @@ namespace brightboard {
 	/**
 	 * Send data down the SPI bus
 	 */
-	 //% blockId=brightboard_spiDotStarSendData block="send colors"
-	void spiDotStarSendData() {
+	 //% 
+	 void spiDotStarSendData() {
 		SPI* spi = getSPI();
 		// Send zero frame intitially
 		for (int8_t i = 0; i < 4; i++) {
@@ -81,11 +79,4 @@ namespace brightboard {
 		}	
 	}
 	
-    /*
-    * Calculates the light in Lux based on the ADC value passed in. 1 step in adcVal is equal to .488 uA or .976 lux at 5V
-    */
-    //% blockId=brightboard_get_bright block="%brightDisplay|get brightness"
-    uint16_t getbright(int16_t bval) {
-        return bval * .976;
-    }
 }

@@ -63,13 +63,15 @@ namespace brightboard {
 			// Fake function for simulator
 		}		
 		
+		
 		/**
-		 * initialize the SPI mode
+		 * Send colors to the strip (hopefully)
 		 */
-		 //% shim=brightboard::dotStarSPIMode
-		dotStarSPIMode(bits: number, mode: number):void {
-			// Fake function for simulator
-		}		
+		//%blockId=brightboard_doColors block="%brightDisplay|send colors" 
+		doColors():void {
+			spiDotStarSendData();
+		}
+		
 		 
 		/**
 		 * color the pixel strip
@@ -77,10 +79,37 @@ namespace brightboard {
 		 //% shim=brightboard::clear
 		clear():void {
 			// Fake function for simulator
-		}		
+		}
+		
+		/**
+		 * clear strip
+		 */
+		//% blockId=brightboard_doClear block="%brightDisplay|clear"
+		doClear():void {
+			clear();
+		}
+		
+		
+		/**
+		 * set the SPI mode
+		 */
+		 //% shim=brightboard::dotStarSPIMode
+		dotStarSPIMode(bits: number, mode: number):void {
+			// Fake function for simulator
+		}
+
+		/**
+		 * initialize the SPI mode
+		 * @param bits bits per write eg:8
+		 * @param mode mode number eg:3
+		 */
+		//% blockId=brightboard_setSPIMode block="%brightDisplay|SPI bits %bits|and mode %mode"
+		setSPIMode(bits: number, mode: number):void {
+			dotStarSPIMode(bits, mode);
+		}				
 	}
 	
-	
+
 		
     /**
 	 * Creates a strip of colored LEDs (APA102)
@@ -106,28 +135,5 @@ namespace brightboard {
 			return brightDisplay;
 	}
 
-
-
-    /**
-    * Reads the number
-    */
-    //% weight=30 blockId="brightboard_light" block="Get light on pin %pin | in %brightBoardType"
-    export function light(pin: AnalogPin, type: brightBoardType): number{
-      let ADCVal = pins.analogReadPin(pin)
-      switch(type){
-        case brightBoardType.Lux: return getbright(ADCVal);
-        case brightBoardType.adcVal: return ADCVal;
-        default: return -11111111;
-      }
-    }
-
-	/**
-     * Function used for simulator, actual implementation is in brightboard.cpp
-     */
-    //% shim=brightboard::getbright
-    function getbright(ADCVal: number) {
-        // Fake function for simulator
-        return 0;
-    }
 
 }
