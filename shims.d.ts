@@ -12,7 +12,7 @@ declare namespace brightboard {
      * @param bits bits per write eg:8
      * @param mode mode number eg:3
      */
-    //% blockId=brightboard_dotStarSPIMode block="set bits %bits| and mode %mode" shim=brightboard::dotStarSPIMode
+    //% blockId=brightboard_dotStarSPIMode block="%brightDisplay|set bits %bits|and mode %mode" shim=brightboard::dotStarSPIMode
     function dotStarSPIMode(bits: int32, mode: int32): void;
 
     /**

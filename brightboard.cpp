@@ -19,7 +19,7 @@ namespace brightboard {
 	 * @param bits bits per write eg:8
 	 * @param mode mode number eg:3
 	 */
-	//% blockId=brightboard_dotStarSPIMode block="set bits %bits| and mode %mode"
+	//% blockId=brightboard_dotStarSPIMode block="%brightDisplay|set bits %bits|and mode %mode"
 	void dotStarSPIMode(int bits, int mode) {
 		//spiFormat(8,3);
 		pins::spiFormat(8,0);
