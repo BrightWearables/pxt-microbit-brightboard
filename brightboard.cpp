@@ -35,8 +35,13 @@ namespace brightboard {
 		// Send data for each pixel (red on, green, blue off)
 		for (int8_t i = 0; i < 12; i++) {
 			spi->write(0xff); //Brightness on full
-			spi->write(0xff); //Red fully on
-			spi->write(0x00); //Blue/green fully off
+			if (i % 2) {
+				spi->write(0xff); //Red fully on
+				spi->write(0x00); //Blue/green fully off
+			} else {
+				spi->write(0x00); //Red fully on
+				spi->write(0xff); //Blue/green fully off
+			}
 			spi->write(0x00);
 		}
 		// Send end frame
