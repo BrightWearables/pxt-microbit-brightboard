@@ -69,7 +69,7 @@ namespace brightboard {
 		 */
 		//%blockId=brightboard_doColors block="%brightDisplay|send colors" 
 		doColors():void {
-			spiDotStarSendData();
+			this.spiDotStarSendData();
 		}
 		
 		 
@@ -86,7 +86,7 @@ namespace brightboard {
 		 */
 		//% blockId=brightboard_doClear block="%brightDisplay|clear"
 		doClear():void {
-			clear();
+			this.clear();
 		}
 		
 		
@@ -105,7 +105,7 @@ namespace brightboard {
 		 */
 		//% blockId=brightboard_setSPIMode block="%brightDisplay|SPI bits %bits|and mode %mode"
 		setSPIMode(bits: number, mode: number):void {
-			dotStarSPIMode(bits, mode);
+			this.dotStarSPIMode(bits, mode);
 		}				
 	}
 	

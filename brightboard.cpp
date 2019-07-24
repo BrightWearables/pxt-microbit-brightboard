@@ -13,29 +13,20 @@ using namespace pxt;
 
 namespace brightboard {
 
-
-	/**
-	 * Set SPI mode
-	 */
-	 //%
+	//%
 	void dotStarSPIMode(int bits, int mode) {
 		//pins::spiFormat(8,3);
 		pins::spiFormat(bits,mode);
 	}
 	
-	/**
-	 * Get SPI pointer
-	 */
+
 	SPI* getSPI() {
 		SPI* spi = pins::allocSPI();
 		return spi;
 	}	
 	
-	/**
-	 * Send data down the SPI bus
-	 */
-	 //% 
-	 void spiDotStarSendData() {
+	//%
+	void spiDotStarSendData() {
 		SPI* spi = getSPI();
 		// Send zero frame intitially
 		for (int8_t i = 0; i < 4; i++) {
@@ -56,10 +47,7 @@ namespace brightboard {
 	
 	
 	
-	/**
-	 * Send data down the SPI bus
-	 */
-	 //% blockId=brightboard_clear block="clear display"	
+	//%
 	void clear() {
 		SPI* spi = getSPI();
 		// Send zero frame intitially
