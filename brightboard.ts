@@ -62,6 +62,14 @@ namespace brightboard {
 		spiDotStarSendData():void {
 			// Fake function for simulator
 		}		
+		
+		/**
+		 * initialize the SPI mode
+		 */
+		 //% shim=brightboard::setDotStarSPIMode
+		setDotStarSPIMode(bits: number, mode: number):void {
+			// Fake function for simulator
+		}		
 		 
 		/**
 		 * color the pixel strip

@@ -16,9 +16,11 @@ namespace brightboard {
 
 	/**
 	 * Set SPI mode
+	 * @param bits bits per write eg:8
+	 * @param mode mode number eg:3
 	 */
-	//%
-	void setDotStarSPIMode() {
+	//% blockId=brightboard_setDotStarSPIMode block="set bits %bits| set mode %mode"
+	void setDotStarSPIMode(int8_t bits, int8_t mode) {
 		//spiFormat(8,3);
 		pins::spiFormat(8,0);
 	}

@@ -9,9 +9,11 @@ declare namespace brightboard {
 
     /**
      * Set SPI mode
+     * @param bits bits per write eg:8
+     * @param mode mode number eg:3
      */
-    //% shim=brightboard::setDotStarSPIMode
-    function setDotStarSPIMode(): void;
+    //% blockId=brightboard_setDotStarSPIMode block="set bits %bits| set mode %mode" shim=brightboard::setDotStarSPIMode
+    function setDotStarSPIMode(bits: int8, mode: int8): void;
 
     /**
      * Send data down the SPI bus
