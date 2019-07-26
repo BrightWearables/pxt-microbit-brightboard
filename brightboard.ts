@@ -1,7 +1,7 @@
 /**
 * Andy England @ SparkFun Electronics
 * September 6, 2018
-* https://github.com/sparkfun/pxt-light-bit
+* https://github.com/BrightWearables/pxt-microbit-brightboard
 
 * Development environment specifics:
 * Written in Microsoft Makecode
@@ -18,15 +18,16 @@
  * Functions to operate the brightboard
  */
 
- enum brightBoardType{
-	 Lux=1,
-	 adcVal=2,
- }
-
+enum colorMode{
+	MODE_RGB = 0,
+	MODE_GRB = 1
+}
 
 
 //% color=#cb42f5 icon="\uf185"
 namespace brightboard {
+
+
 
     // Functions for reading light from the brightboard in lux or straight adv value
 	export class BrightBoardDisplay {
@@ -43,24 +44,108 @@ namespace brightboard {
         start: number;
         _stride: number;  //bits per pixel
         _length: number;  //number of pixels (12)
+		_mode: colorMode;
 		
-		
-		
-		/**
-		 * Get the brightness of the pixel strip.
-		 */
-		//% blockId="brightboard_get_brightness" block="%brightDisplay|brightness"
-		//% weight=7 blockGap=8
+		constructor(dataPin: DigitalPin, clkPin: DigitalPin) {
+        	this.dataPin = dataPin;
+			this.clkPin = clkPin;
+			this._length = 12;
+			this._stride = 3;
+			this.brightness = 64;
+			this.buf = pins.createBuffer(this._length * this._stride);
+			this.start = 0;
+			this._mode = colorMode.MODE_GRB;
+		}
+			
+
 		getBrightness(): number {
 		   return this.brightness;
-		}		
+		}
+		
+		setBrightness(bright: number): void {
+			this.brightness = bright;
+		}
+		
+		
+        private setBufferRGB(offset: number, red: number, green: number, blue: number): void {
+            if (this._mode === colorMode.MODE_RGB) {
+                this.buf[offset + 0] = red;
+                this.buf[offset + 1] = green;
+            } else {
+                this.buf[offset + 0] = green;
+                this.buf[offset + 1] = red;
+            }
+            this.buf[offset + 2] = blue;
+        }
+
+        private setAllRGB(rgb: number) {
+            let red = unpackR(rgb);
+            let green = unpackG(rgb);
+            let blue = unpackB(rgb);
+
+            const br = this.brightness;
+            if (br < 255) {
+                red = (red * br) >> 8;
+                green = (green * br) >> 8;
+                blue = (blue * br) >> 8;
+            }
+            const end = this.start + this._length;
+            const stride = this._stride;
+            for (let i = this.start; i < end; ++i) {
+                this.setBufferRGB(i * stride, red, green, blue)
+            }
+        }
+
+		
+        private setPixelRGB(pixeloffset: number, rgb: number): void {
+            if (pixeloffset < 0
+                || pixeloffset >= this._length)
+                return;
+
+            let stride = this._stride;
+            pixeloffset = (pixeloffset + this.start) * stride;
+
+            let red = unpackR(rgb);
+            let green = unpackG(rgb);
+            let blue = unpackB(rgb);
+
+            let br = this.brightness;
+            if (br < 255) {
+                red = (red * br) >> 8;
+                green = (green * br) >> 8;
+                blue = (blue * br) >> 8;
+            }
+            this.setBufferRGB(pixeloffset, red, green, blue)
+        }		
 
 	}
+	
+	
+	// Only want one instance of brightBoardDisplay class - this sis it
+	let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
 			
+	/**
+	 * Get the brightness of the pixel strip.
+	*/
+	//% blockId="brightboard_get_brightness" block="brightness"
+	//% weight=7 blockGap=8
+	export function brightness(): number {
+		return brightDisplay.getBrightness();
+	}
 	
 	
 	/**
-	 * Send colors to the strip (hopefully)
+	 * Set the brightness of the pixel strip
+	 * @param bright brightness of pixels eg:64
+	 */
+	 //%blockId="bright_board_set_brightness" block="set_brightness"
+	 //%bright.max=255 bright.min=0
+	export function setBrightness(bright: number): void {
+		brightDisplay.setBrightness(bright);
+	}
+	
+	/**
+	 * Send colors to the strip
 	 */
 	//%blockId=brightboard_spi_dotstar_send_data block="send colors" 
 	//% shim=brightboard::spiDotStarSendData
@@ -79,8 +164,6 @@ namespace brightboard {
 		return
 	}
 	
-	
-
 
 	/**
 	 * initialize the SPI mode
@@ -95,29 +178,23 @@ namespace brightboard {
 
 
 		
-    /**
-	 * Creates a strip of colored LEDs (APA102)
-	 * @param dataPin data pin eg:DigitalPin.P15
-	 * @param clkPin clock pin eg:DigitalPin.P13
-	 */
-	//% blockId="brightboard_create_board" block="create brightBoard|data %dataPin|clock %clkPin"
-	//% dataPin.fieldEditor="gridpicker" dataPin.fieldOptions.columns=4
-    //% dataPin.fieldOptions.tooltips="false" dataPin.fieldOptions.width="250"
-	//% clkPin.fieldEditor="gridpicker" clkPin.fieldOptions.columns=4
-    //% clkPin.fieldOptions.tooltips="false" clkPin.fieldOptions.width="250"
-	//% weight=100 blockSetVariable=brightDisplay
-	export function createBoard(dataPin: DigitalPin, clkPin: DigitalPin): BrightBoardDisplay {
-			let brightDisplay = new BrightBoardDisplay();
-			brightDisplay.dataPin = dataPin;
-			brightDisplay.clkPin = clkPin;
-			brightDisplay._length = 12;
-			brightDisplay._stride = 4;
-			brightDisplay.brightness = 64;
-			brightDisplay.buf = pins.createBuffer(brightDisplay._length * brightDisplay._stride);
-			brightDisplay.start = 0;
 
-			return brightDisplay;
-	}
+	
+	function packRGB(a: number, b: number, c: number): number {
+        return ((a & 0xFF) << 16) | ((b & 0xFF) << 8) | (c & 0xFF);
+    }
+    function unpackR(rgb: number): number {
+        let r = (rgb >> 16) & 0xFF;
+        return r;
+    }
+    function unpackG(rgb: number): number {
+        let g = (rgb >> 8) & 0xFF;
+        return g;
+    }
+    function unpackB(rgb: number): number {
+        let b = (rgb) & 0xFF;
+        return b;
+    }
 
 
 }
