@@ -216,11 +216,11 @@ namespace brightboard {
 	 */
 	 //% blockId=brightboard_show block="show" weight=150
 	export function show(): void {
-		if (brightDisplay._pixelType == pixelType.TYPE_DOTSTAR) {
+//		if (brightDisplay._pixelType == pixelType.TYPE_DOTSTAR) {
 			spiSendBuffer(brightDisplay.getBuffer(), brightDisplay.getLength());
-		} else {
-			ws2812b.sendBuffer(brightDisplay.getBuffer(), DigitalPin.P0);
-		}
+//		} else {
+//			ws2812b.sendBuffer(brightDisplay.getBuffer(), DigitalPin.P0);
+//		}
 	}
 	
 
