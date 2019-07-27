@@ -43,7 +43,7 @@ namespace brightboard {
 			spi->write(bufPtr[offset+2]);
 			spi->write(bufPtr[offset+1]);
 			spi->write(bufPtr[offset]);
-			spi->write(0x00);
+			//spi->write(0x00);
 		}
 		// Send end frame
 		for (int8_t i = 0; i < 4; i++) {
@@ -54,23 +54,18 @@ namespace brightboard {
 	
 	
 	//%
-	void clear() {
+	void clear(Buffer buf, int len) {
 		SPI* spi = getSPI();
-		// Send zero frame intitially
-		for (int8_t i = 0; i < 4; i++) {
-			spi->write(0x00);
+		uint8_t *bufPtr = buf->data;
+		int offset;
+		// Zero out the buffer
+		for (int8_t i = 0; i < len; i++) {
+			offset = i*3;
+			bufPtr[offset] = 0;
+			bufPtr[offset+1] = 0;
+			bufPtr[offset+2]=0;
 		}
-		// Send data for each pixel (red on, green, blue off)
-		for (int8_t i = 0; i < 12; i++) {
-			spi->write(0xff); //Brightness on full
-			spi->write(0x00); //Red fully off
-			spi->write(0x00); //Blue/green fully off
-			spi->write(0x00);
-		}
-		// Send end frame
-		for (int8_t i = 0; i < 4; i++) {
-			spi->write(0xff);
-		}	
+		spiDotStarSendBuffer(buf, len);
 	}
 	
 }

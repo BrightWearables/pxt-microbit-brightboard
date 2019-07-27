@@ -205,7 +205,7 @@ namespace brightboard {
 	 * @param len Number of pixels to send data for
 	 * dummy function pass through for C function
 	 */
-	 //%blockId=brightboard_spi_dotstar_send_buffer
+	 //%blockId=brightboard_spi_dotstar_send_buffer blockHidden=true
 	 //%shim=brightboard::spiDotStarSendBuffer
 	 export function spiSendBuffer(buf: Buffer, len: number): void {
 		 return
@@ -223,6 +223,35 @@ namespace brightboard {
 //		}
 	}
 	
+	/**
+	 * clear the pixel strip
+	 * @param buf Buffer to send
+	 * @param len Number of pixels to send data for
+	 * dummy function pass through for C function
+	 */
+	 //% blockId=brightboard_spi_clear blockHidde=true
+	 //% shim=brightboard::clear weight=150
+	export function spiClear(buf: Buffer, len: number):void {
+		// Fake function for simulator
+		return;
+	}
+	
+	/**
+	 * Clears the pixel strip - must call show to see effect
+	 */
+	 //% blockId = brightboard_clear block="clear" weight=140
+	export function clear() : void {
+		spiClear(brightDisplay.getBuffer(), brightDisplay.getLength());
+	}
+	
+	
+	/**
+	 * Generate a random color
+	 */
+	 //% blockId=brightboard_random_color block="random color" weight=75
+	 export function randomColor(): number {
+		return packRGB(Math.randomRange(0, 255), Math.randomRange(0, 255), Math.randomRange(0, 255));
+	 }
 
 			
 	/**
@@ -304,16 +333,7 @@ namespace brightboard {
     }
 	
 	 
-	/**
-	 * clear the pixel strip
-	 */
-	 //% blockId=brightboard_clear block="clear"
-	 //% shim=brightboard::clear weight=150
-	export function clear():void {
-		// Fake function for simulator
-		return;
-	}
-	
+
 	
 	/**
 	 * sets all pixels on BrightBoard to the same color - must select show to execute
