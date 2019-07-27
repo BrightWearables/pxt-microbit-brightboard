@@ -246,7 +246,7 @@ namespace brightboard {
 	 * sets all pixels on BrightBoard to the same color
 	 * @param rgb color for pixels eg:0xff0000
 	 */
-	 //% blockId = set_board_color block="set all pixels $rgb"
+	 //% blockId = set_board_color block="set color for all to $rgb"
 	 //% rgb.shadow=brightColorNumberPicker
 	export function setBoardColor(rgb: number) {
 		brightDisplay.setAllRGB(rgb);
