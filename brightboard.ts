@@ -23,6 +23,13 @@ enum colorMode{
 	MODE_GRB = 1
 }
 
+enum pixelType{
+	//% block="neopixel"
+	TYPE_NEOPIXEL=0,
+	//% block="dotstar"
+	TYPE_DOTSTAR=1
+}
+
 
 //% color=#cb42f5 icon="\uf185"
 namespace brightboard {
@@ -93,16 +100,18 @@ namespace brightboard {
         _stride: number;  //bits per pixel
         _length: number;  //number of pixels (12)
 		_mode: colorMode;
+		_pixelType: pixelType;
 		
 		constructor(dataPin: DigitalPin, clkPin: DigitalPin) {
         	this.dataPin = dataPin;
 			this.clkPin = clkPin;
 			this._length = 12;
 			this._stride = 3;
-			this.brightness = 64;
+			this.brightness = 128;
 			this.buf = pins.createBuffer(this._length * this._stride);
 			this.start = 0;
 			this._mode = colorMode.MODE_RGB;
+			this._pixelType = pixelType.TYPE_DOTSTAR;
 		}
 			
 
@@ -176,6 +185,18 @@ namespace brightboard {
 
 	}
 	
+    // Only want one instance of brightBoardDisplay class - this is it
+	let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
+
+	/**
+	 * Set the type of LED (neopixel or dotstar)  
+	 * @param pixelType type of pixels used: eg:pixelType.TYPE_DOTSTAR
+	 */
+	 //% blockId=brightboard_set_pixel_type block="set pixel type %type"
+	 export function setPixelType(type: pixelType): void {
+		brightDisplay._pixelType=type;
+	 }
+		 
 	
 	/**
 	 * @param buf Buffer to send
@@ -193,11 +214,14 @@ namespace brightboard {
 	 */
 	 //% blockId=brightboard_show block="show"
 	export function show(): void {
-		spiSendBuffer(brightDisplay.getBuffer(), brightDisplay.getLength());
+		if (brightDisplay._pixelType == pixelType.TYPE_DOTSTAR) {
+			spiSendBuffer(brightDisplay.getBuffer(), brightDisplay.getLength());
+		} else {
+			ws2812b.sendBuffer(this.buf, DigitalPin.P0);
+		}
 	}
 	
-	// Only want one instance of brightBoardDisplay class - this sis it
-	let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
+
 			
 	/**
 	 * Get the brightness of the pixel strip.
@@ -218,15 +242,7 @@ namespace brightboard {
 	export function setBrightness(bright: number): void {
 		brightDisplay.setBrightness(bright);
 	}
-	
-	/**
-	 * Send colors to the strip
-	 */
-	//%blockId=brightboard_spi_dotstar_send_data block="send colors" 
-	//% shim=brightboard::spiDotStarSendData
-	export function doColors():void {
-		return
-	}
+
 	
 	/**
 	 * Set specified pixel to the specifed color (must use show to send)
@@ -236,7 +252,7 @@ namespace brightboard {
 	 //% blockId=brightboard_set_pixel_color block="set pixel %led| to %rgb"
 	 //% led.min=1 led.max=12 rgb.shadow="brightColorNumberPicker"
 	 export function setPixelColor(led: number, rgb: number) {
-		brightDisplay.setPixelRGB(led-1, rgb);
+		brightDisplay.setPixelRGB(led, rgb);
 	 }
 	 
 	 /**
@@ -248,7 +264,7 @@ namespace brightboard {
         let len = colorList.length;
         let index = 0;
         for (let i = 0; i < brightDisplay._length; i++) {
-			this.setPixelColor(i, colorList[index]);
+			brightDisplay.setPixelRGB(i, colorList[index]);
             index = index + 1;
             if (index >= len) {
                index = 0;
@@ -290,7 +306,7 @@ namespace brightboard {
 	 */
 	 //% blockId=set_board_color block="set all pixels $rgb"
 	 //% rgb.shadow="brightColorNumberPicker"
-	export function setBoardColor(rgb: number) {
+	export function setBoardColor(rgb: number): void {
 		brightDisplay.setAllRGB(rgb);
 	}
 	
@@ -301,7 +317,7 @@ namespace brightboard {
 	 * @param mode mode number eg:3
 	 */
 	//% blockId=brightboard_set_spi_mode block="SPI bits %bits|and mode %mode"
-	//% shim=brightboard::dotStarSPIMode
+	//% shim=brightboard::dotStarSPIMode blockHidden=true
 	export function setSPIMode(bits: number, mode: number):void {
 		return
 	}				
@@ -317,6 +333,16 @@ namespace brightboard {
 	 export function rgbColor(R: number, G: number, B: number): number {
 		return packRGB(R, G, B);
 	 }
+	 
+	/**
+	 * single RGB color with dropdown color number picker 
+	 * @param rgb color value eg:0xff0000
+	 */
+	//% blockId=brightboard_color_chooser block="%rgb"
+	//% rgb.shadow="brightColorNumberPicker" weight=125
+	export function pickColor(rgb: number): number {
+		return rgb;
+	}
 
 	function packRGB(a: number, b: number, c: number): number {
         return ((a & 0xFF) << 16) | ((b & 0xFF) << 8) | (c & 0xFF);

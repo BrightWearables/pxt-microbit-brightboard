@@ -25,30 +25,6 @@ namespace brightboard {
 		return spi;
 	}	
 	
-	//%
-	void spiDotStarSendData() {
-		SPI* spi = getSPI();
-		// Send zero frame intitially
-		for (int8_t i = 0; i < 4; i++) {
-			spi->write(0x00);
-		}
-		// Send data for each pixel (red on, green, blue off)
-		for (int8_t i = 0; i < 12; i++) {
-			spi->write(0xff); //Brightness on full
-			if (i % 2) {
-				spi->write(0xff); //Red fully on
-				spi->write(0x00); //Blue/green fully off
-			} else {
-				spi->write(0x00); //Red fully on
-				spi->write(0xff); //Blue/green fully off
-			}
-			spi->write(0x00);
-		}
-		// Send end frame
-		for (int8_t i = 0; i < 4; i++) {
-			spi->write(0xff);
-		}
-	}
 	
 	//%
 	void spiDotStarSendBuffer(Buffer buf, int len) {
@@ -63,11 +39,10 @@ namespace brightboard {
 		for(int8_t i = 0; i < len; i++) {
 			offset = i*3;
 			spi->write(0xff); //Brightness on full - colors already scaled in buffer
-			int base = 0xff;
 			// For some reason colors go out in reverse order
-			spi->write(bufPtr[offset+2] && base);
-			spi->write(bufPtr[offset+1] && base);
-			spi->write(bufPtr[offset] && base);
+			spi->write(bufPtr[offset+2]);
+			spi->write(bufPtr[offset+1]);
+			spi->write(bufPtr[offset]);
 			spi->write(0x00);
 		}
 		// Send end frame
