@@ -102,7 +102,7 @@ namespace brightboard {
 			this.brightness = 64;
 			this.buf = pins.createBuffer(this._length * this._stride);
 			this.start = 0;
-			this._mode = colorMode.MODE_GRB;
+			this._mode = colorMode.MODE_RGB;
 		}
 			
 
@@ -121,8 +121,6 @@ namespace brightboard {
 		setBrightness(bright: number): void {
 			this.brightness = bright;
 		}
-		
-		
 		
 		
        setBufferRGB(offset: number, red: number, green: number, blue: number): void {
@@ -229,6 +227,50 @@ namespace brightboard {
 	export function doColors():void {
 		return
 	}
+	
+	/**
+	 * Set specified pixel to the specifed color (must use show to send)
+	 * @param led index of pixel to change eg:1
+	 * @param rgb color to set pixel to eg:0xff0000
+	 */
+	 //% blockId=brightboard_set_pixel_color block="set pixel %led| to %rgb"
+	 //% led.min=1 led.max=12 rgb.shadow="brightColorNumberPicker"
+	 export function setPixelColor(led: number, rgb: number) {
+		brightDisplay.setPixelRGB(led-1, rgb);
+	 }
+	 
+	 /**
+	  * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
+	  * @param colorList list of colors to set
+	  */ 
+	  //% blockId=brightboard_set_pixel_array block="set color list $colorList"
+	  export function setPixelArray(colorList: Array<number>): void {
+        let len = colorList.length;
+        let index = 0;
+        for (let i = 0; i < brightDisplay._length; i++) {
+			this.setPixelColor(i, colorList[index]);
+            index = index + 1;
+            if (index >= len) {
+               index = 0;
+            }
+        }
+	 }
+	 
+	 
+	 /**
+	  * Rotates the current pattern by the specified offset.
+	  * You need to call show to make the changes visible.
+	  * @param offset rotation steps eg:1
+	  */
+	 //% blockId=brightboard_rotate block="rotate pattern by $offset"
+	 //% offset.min=1 offset.max=12
+	 export function rotate(offset: number): void {
+		let stride = brightDisplay._stride;
+		let start = brightDisplay.start;
+		let len = brightDisplay._length;
+		brightDisplay.getBuffer().rotate(-offset * stride, start * stride, len * stride);
+    }
+
 	
 	 
 	/**

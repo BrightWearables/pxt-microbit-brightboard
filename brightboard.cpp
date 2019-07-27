@@ -64,9 +64,10 @@ namespace brightboard {
 			offset = i*3;
 			spi->write(0xff); //Brightness on full - colors already scaled in buffer
 			int base = 0xff;
-			spi->write(bufPtr[offset] && base);
-			spi->write(bufPtr[offset+1] && base);
+			// For some reason colors go out in reverse order
 			spi->write(bufPtr[offset+2] && base);
+			spi->write(bufPtr[offset+1] && base);
+			spi->write(bufPtr[offset] && base);
 			spi->write(0x00);
 		}
 		// Send end frame
