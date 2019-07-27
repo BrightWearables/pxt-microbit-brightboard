@@ -239,19 +239,12 @@ namespace brightboard {
 	/**
 	 * Clears the pixel strip - must call show to see effect
 	 */
-	 //% blockId = brightboard_clear block="clear" weight=140
-	export function clear() : void {
+	 //% blockId=brightboard_clear block="clear" weight=140
+	export function doClear() : void {
 		spiClear(brightDisplay.getBuffer(), brightDisplay.getLength());
 	}
 	
 	
-	/**
-	 * Generate a random color
-	 */
-	 //% blockId=brightboard_random_color block="random color" weight=75
-	 export function randomColor(): number {
-		return packRGB(Math.randomRange(0, 255), Math.randomRange(0, 255), Math.randomRange(0, 255));
-	 }
 
 			
 	/**
@@ -378,6 +371,60 @@ namespace brightboard {
 	export function pickColor(rgb: number): number {
 		return rgb;
 	}
+	
+	/**
+     * Converts a hue saturation luminosity value into a RGB color
+     * @param h hue from 0 to 360
+     * @param s saturation from 0 to 99
+     * @param l luminosity from 0 to 99
+     */
+    //% blockId=brightboardHSL block="hue %h|saturation %s|luminosity %l"
+	//% h.defl=0 h.min=0 h.max=360 s.defl=99 s.min=0 s.max=99 l.defl=99 l.min=0 l.max=99
+    export function hsl(h: number, s: number, l: number): number {
+        h = Math.round(h);
+        s = Math.round(s);
+        l = Math.round(l);
+        
+        h = h % 360;
+        s = Math.clamp(0, 99, s);
+        l = Math.clamp(0, 99, l);
+        let c = Math.idiv((((100 - Math.abs(2 * l - 100)) * s) << 8), 10000); //chroma, [0,255]
+        let h1 = Math.idiv(h, 60);//[0,6]
+        let h2 = Math.idiv((h - h1 * 60) * 256, 60);//[0,255]
+        let temp = Math.abs((((h1 % 2) << 8) + h2) - 256);
+        let x = (c * (256 - (temp))) >> 8;//[0,255], second largest component of this color
+        let r$: number;
+        let g$: number;
+        let b$: number;
+        if (h1 == 0) {
+            r$ = c; g$ = x; b$ = 0;
+        } else if (h1 == 1) {
+            r$ = x; g$ = c; b$ = 0;
+        } else if (h1 == 2) {
+            r$ = 0; g$ = c; b$ = x;
+        } else if (h1 == 3) {
+            r$ = 0; g$ = x; b$ = c;
+        } else if (h1 == 4) {
+            r$ = x; g$ = 0; b$ = c;
+        } else if (h1 == 5) {
+            r$ = c; g$ = 0; b$ = x;
+        }
+        let m = Math.idiv((Math.idiv((l * 2 << 8), 100) - c), 2);
+        let r = r$ + m;
+        let g = g$ + m;
+        let b = b$ + m;
+        return packRGB(r, g, b);
+    }
+	
+	
+    /**
+	 * Generate a random color
+	 */
+	 //% blockId=brightboard_random_color block="random color" weight=75
+	 export function randomColor(): number {
+		return hsl(Math.randomRange(0, 359), 99, 99);
+	 }
+
 
 	function packRGB(a: number, b: number, c: number): number {
         return ((a & 0xFF) << 16) | ((b & 0xFF) << 8) | (c & 0xFF);

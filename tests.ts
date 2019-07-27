@@ -3,12 +3,12 @@ input.onButtonPressed(Button.A, function () {
     brightboard.show()
 })
 input.onButtonPressed(Button.B, function () {
-    brightboard.clear()
+    brightboard.doClear()
     brightboard.show()
 })
 basic.showIcon(IconNames.Heart)
 brightboard.setBrightness(64)
-brightboard.clear()
+brightboard.doClear()
 brightboard.show()
 basic.forever(function () {
     basic.showIcon(IconNames.Heart)
