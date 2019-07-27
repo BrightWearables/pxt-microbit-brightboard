@@ -215,7 +215,7 @@ namespace brightboard {
 	 * Set the brightness of the pixel strip
 	 * @param bright brightness of pixels eg:64
 	 */
-	 //%blockId=bright_board_set_brightness block=block="set brightness %brightVal"
+	 //%blockId=bright_board_set_brightness block="set brightness %brightVal"
 	 //%bright.max=255 bright.min=0
 	export function setBrightness(bright: number): void {
 		brightDisplay.setBrightness(bright);
@@ -244,7 +244,7 @@ namespace brightboard {
 	
 	/**
 	 * sets all pixels on BrightBoard to the same color
-	 * @param rgb color for pixels
+	 * @param rgb color for pixels eg:0xff0000
 	 */
 	 //% blockId = set_board_color block="set all pixels $rgb"
 	 //% rgb.shadow=brightColorNumberPicker
