@@ -185,14 +185,16 @@ namespace brightboard {
 
 	}
 	
-    // Only want one instance of brightBoardDisplay class - this is it
+    // ----Only want one instance of brightBoardDisplay class - this is it----
 	let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
 
 	/**
 	 * Set the type of LED (neopixel or dotstar)  
-	 * @param pixelType type of pixels used: eg:pixelType.TYPE_DOTSTAR
+	 * @param type the type of pixels used: eg:pixelType.TYPE_DOTSTAR
 	 */
 	 //% blockId=brightboard_set_pixel_type block="set pixel type %type"
+	 //% pixelType.defl=pixelType.TYPE_DOTSTAR
+	 //% advanced=true
 	 export function setPixelType(type: pixelType): void {
 		brightDisplay._pixelType=type;
 	 }
@@ -212,12 +214,12 @@ namespace brightboard {
 	/**
 	 * Sends the color buffer to the pixels
 	 */
-	 //% blockId=brightboard_show block="show"
+	 //% blockId=brightboard_show block="show" weight=150
 	export function show(): void {
 		if (brightDisplay._pixelType == pixelType.TYPE_DOTSTAR) {
 			spiSendBuffer(brightDisplay.getBuffer(), brightDisplay.getLength());
 		} else {
-			ws2812b.sendBuffer(this.buf, DigitalPin.P0);
+			ws2812b.sendBuffer(brightDisplay.getBuffer(), DigitalPin.P0);
 		}
 	}
 	
@@ -286,14 +288,27 @@ namespace brightboard {
 		let len = brightDisplay._length;
 		brightDisplay.getBuffer().rotate(-offset * stride, start * stride, len * stride);
     }
-
+	
+	 /**
+	  * Rotates the current pattern by the specified offset.
+	  * You need to call show to make the changes visible.
+	  * @param offset shift steps eg:1
+	  */
+	 //% blockId=brightboard_shift block="shift pattern by $offset"
+	 //% offset.min=1 offset.max=12
+	 export function shift(offset: number): void {
+		let stride = brightDisplay._stride;
+		let start = brightDisplay.start;
+		let len = brightDisplay._length;
+		brightDisplay.getBuffer().shift(-offset * stride, start * stride, len * stride);
+    }
 	
 	 
 	/**
 	 * clear the pixel strip
 	 */
 	 //% blockId=brightboard_clear block="clear"
-	 //% shim=brightboard::clear
+	 //% shim=brightboard::clear weight=150
 	export function clear():void {
 		// Fake function for simulator
 		return;
