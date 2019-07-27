@@ -50,6 +50,31 @@ namespace brightboard {
 		}
 	}
 	
+	//%
+	void spiDotStarSendBuffer(Buffer buf, int len) {
+		SPI* spi = getSPI();
+		// Send zero frame initially
+		for (int8_t i = 0; i < 4; i++) {
+			spi->write(0x00);
+		}
+		int offset;
+		uint8_t* bufPtr = buf->data;
+		// Send values from buffer
+		for(int8_t i = 0; i < len; i++) {
+			offset = i*3;
+			spi->write(0xff); //Brightness on full - colors already scaled in buffer
+			int base = 0xff;
+			spi->write(bufPtr[offset] && base);
+			spi->write(bufPtr[offset+1] && base);
+			spi->write(bufPtr[offset+2] && base);
+			spi->write(0x00);
+		}
+		// Send end frame
+		for (int8_t i = 0; i < 4; i++) {
+			spi->write(0xff);
+		}		
+	}
+	
 	
 	
 	//%
