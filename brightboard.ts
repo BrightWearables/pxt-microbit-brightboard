@@ -82,47 +82,6 @@ namespace brightboard {
         return [ledval1, ledval2, ledval3, ledval4, ledval5, ledval6, ledval7, ledval8, ledval9, ledval10, ledval11, ledval12];
     }
 
-	//------------------------------------------
-	// Testing a class to see if we can get an array of colors to work
-	export class colorClass {
-		_color: number;
-		
-		constructor(col:number) {
-			this._color = col;
-		}
-		setColor(col: number): void {
-			this._color = col;
-		}
-		getColor():number {
-			return this._color;
-		}	
-	}
-	
-	//% blockId=testColor block="%col"
-	//% col.shadow="brightColorNumberPicker"
-	export function testBlock(col: number) : colorClass {
-		let colorTest = new colorClass(col);
-		return colorTest;
-	}
-	
-	 /**
-	  * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
-	  * @param colorList list of colors to set
-	  */ 
-	  //% blockId=brightboard_set_test_array block="set color list $colorList"
-	  export function setTestArray(colorList: Array<colorClass>): void {
-        let len = colorList.length;
-        let index = 0;
-        for (let i = 0; i < brightDisplay._length; i++) {
-			brightDisplay.setPixelRGB(i, colorList[index].getColor());
-            index = index + 1;
-            if (index >= len) {
-               index = 0;
-            }
-        }
-	 } 
-	//-------------end test-------------------------
-
 
     // Functions for reading light from the brightboard in lux or straight adv value
 	export class BrightBoardDisplay {
