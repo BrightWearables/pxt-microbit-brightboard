@@ -457,6 +457,5 @@ namespace brightboard {
         let b = (rgb) & 0xFF;
         return b;
     }
-
-
 }
+
