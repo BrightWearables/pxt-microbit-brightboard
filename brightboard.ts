@@ -380,7 +380,7 @@ namespace brightboard {
      * @param l luminosity from 0 to 99
      */
     //% blockId=brightboardHSL block="hue %h|saturation %s|luminosity %l"
-	//% h.defl=0 h.min=0 h.max=360 s.defl=99 s.min=0 s.max=99 l.defl=50 l.min=0 l.max=99
+	//% h.defl=0 h.shadow="colorWheelHsvPicker" h.min=0 h.max=360 s.defl=99 s.min=0 s.max=99 l.defl=50 l.min=0 l.max=99
     export function hsl2rgb(h: number, s: number, l: number): number {
         h = Math.round(h);
         s = Math.round(s);
