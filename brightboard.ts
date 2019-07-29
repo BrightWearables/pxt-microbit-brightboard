@@ -14,6 +14,7 @@
 */
 
 
+
 /**
  * Functions to operate the brightboard
  */
@@ -29,7 +30,6 @@ enum pixelType{
 	//% block="dotstar"
 	TYPE_DOTSTAR=1
 }
-
 
 //% color=#cb42f5 icon="\uf185"
 namespace brightboard {
@@ -283,6 +283,7 @@ namespace brightboard {
 	  * @param colorList list of colors to set
 	  */ 
 	  //% blockId=brightboard_set_pixel_array block="set color list $colorList"
+	  //% mutate="restparameter" mutateDefaults="0xff0000, 0x00ff00, 0x0000ff"
 	  export function setPixelArray(colorList: Array<number>): void {
         let len = colorList.length;
         let index = 0;
@@ -375,12 +376,12 @@ namespace brightboard {
 	
 	/**
      * Converts a hue saturation luminosity value into a RGB color
-     * @param h hue from 0 to 360
+     * @param h hue from 0 to 255
      * @param s saturation from 0 to 99
      * @param l luminosity from 0 to 99
      */
     //% blockId=brightboardHSL block="hue %h|saturation %s|luminosity %l"
-	//% h.defl=0 h.shadow="colorWheelHsvPicker" h.min=0 h.max=360 s.defl=99 s.min=0 s.max=99 l.defl=50 l.min=0 l.max=99
+	//% h.defl=0 h.shadow="colorWheelHsvPicker" h.min=0 h.max=255 s.defl=99 s.min=0 s.max=99 l.defl=50 l.min=0 l.max=99
     export function hsl2rgb(h: number, s: number, l: number): number {
         h = Math.round(h);
         s = Math.round(s);
@@ -389,7 +390,7 @@ namespace brightboard {
 		let g = 0;
 		let b = 0;
         
-        h /= 60;
+        h /= 42;
 		if (h < 0) h = 6 - (-h % 6);
 		h %= 6;
 
@@ -432,6 +433,8 @@ namespace brightboard {
         return packRGB(r, g, b);
     }
 	
+
+	
 	
     /**
 	 * Generate a random color
@@ -457,5 +460,6 @@ namespace brightboard {
         let b = (rgb) & 0xFF;
         return b;
     }
-}
+}	
+
 
