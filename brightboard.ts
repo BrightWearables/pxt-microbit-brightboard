@@ -283,7 +283,6 @@ namespace brightboard {
 	  * @param colorList list of colors to set
 	  */ 
 	  //% blockId=brightboard_set_pixel_array block="set color list $colorList"
-	  //% mutate="restparameter" mutateDefaults="0xff0000, 0x00ff00, 0x0000ff"
 	  export function setPixelArray(colorList: Array<number>): void {
         let len = colorList.length;
         let index = 0;
@@ -295,7 +294,29 @@ namespace brightboard {
             }
         }
 	 }
-	 
+
+    export class ColorArgClass {
+		red: number;
+		blue: number;
+		green: number;
+		orange: number;
+	}
+	enum ColorArgNames {
+		red,
+		blue,
+		green,
+		orange
+	}
+	
+	 /**
+	  * mutator block attempt number two
+	  */
+	 //% blockId=brightboard_pixel_color_list block="color list: %colorList"
+	 //% mutate="objectdestructuring" mutateText="colors" mutatePropertyEnum="ColorArgNames"
+	 //% colorList.defl=[ColorArgNames.red, ColorArgNames.blue]
+	 export function pixelColorList(colorList: ColorArgNames[]):void {
+		 serial.writeNumbers(colorList);
+	 }		 
 	 
 	 /**
 	  * Rotates the current pattern by the specified offset.
