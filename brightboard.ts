@@ -31,8 +31,9 @@ enum pixelType{
 	TYPE_DOTSTAR=1
 }
 
-//% color=#cb42f5 icon="\uf185"
+//% color=#cb42f5 icon="\uf185" groups=["others", "animations", colors]  
 namespace brightboard {
+	
 
     /**
      * Get the color wheel field editor
@@ -110,7 +111,7 @@ namespace brightboard {
 			this.buf = pins.createBuffer(this._length * this._stride);
 			this.start = 0;
 			this._mode = colorMode.MODE_RGB;
-			this._pixelType = pixelType.TYPE_DOTSTAR;
+			this._pixelType = pixelType.TYPE_NEOPIXEL;
 		}
 			
 
@@ -153,11 +154,10 @@ namespace brightboard {
                 green = (green * br) >> 8;
                 blue = (blue * br) >> 8;
             }
-            const end = this.start + this._length;
-            const stride = this._stride;
-            for (let i = this.start; i < end; ++i) {
-                this.setBufferRGB(i * stride, red, green, blue)
-            }
+            const end = this.start + this._length; 
+            for (let i = 0; i < end; i++) {
+				this.setBufferRGB(i, red, green, blue);
+			}
         }
 
 		
@@ -215,11 +215,11 @@ namespace brightboard {
 	 */
 	 //% blockId=brightboard_show block="show" weight=150
 	export function show(): void {
-//		if (brightDisplay._pixelType == pixelType.TYPE_DOTSTAR) {
+		if (brightDisplay._pixelType == pixelType.TYPE_DOTSTAR) {
 			spiSendBuffer(brightDisplay.getBuffer(), brightDisplay.getLength());
-//		} else {
-//			ws2812b.sendBuffer(brightDisplay.getBuffer(), DigitalPin.P0);
-//		}
+		} else {
+			ws2812b.sendBuffer(brightDisplay.getBuffer(), DigitalPin.P0);
+		}
 	}
 	
 	/**
@@ -295,28 +295,6 @@ namespace brightboard {
         }
 	 }
 
-    export class ColorArgClass {
-		red: number;
-		blue: number;
-		green: number;
-		orange: number;
-	}
-	enum ColorArgNames {
-		red,
-		blue,
-		green,
-		orange
-	}
-	
-	 /**
-	  * mutator block attempt number two
-	  */
-	 //% blockId=brightboard_pixel_color_list block="color list: %colorList"
-	 //% mutate="objectdestructuring" mutateText="colors" mutatePropertyEnum="ColorArgNames"
-	 //% colorList.defl=[ColorArgNames.red, ColorArgNames.blue]
-	 export function pixelColorList(colorList: ColorArgNames[]):void {
-		 serial.writeNumbers(colorList);
-	 }		 
 	 
 	 /**
 	  * Rotates the current pattern by the specified offset.
