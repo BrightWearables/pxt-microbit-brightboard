@@ -40,7 +40,6 @@ namespace brightboard {
      * @param color color, eg: #ff0000
      */
     //% blockId=brightColorNumberPicker block="%value"
-    //% blockHidden=true
     //% shim=TD_ID colorSecondary="#FFFFFF"
     //% value.fieldEditor="colornumber" value.fieldOptions.decompileLiterals=true
     //% value.defl='#ff0000'
@@ -50,24 +49,6 @@ namespace brightboard {
         return value;
     }
 	
-	function testFunction(input: number): number {
-		return 0x00ff00;
-	}
-	
-	/**
-	 * non shadow block version
-     * Get the color wheel field editor
-     * @param color color, eg: #ff0000
-     */
-    //% blockId=brightColNumPicker block="%value"
-    //% shim=TD_ID colorSecondary="#FFFFFF"
-    //% value.fieldEditor="colornumber" value.fieldOptions.decompileLiterals=true
-    //% value.defl='#ff0000'
-    //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#f3f2da","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#ff3790","#ff0e36","#000000", "#C3C6D8", "#727474", "#171717"]'
-    //% value.fieldOptions.columns=5 value.fieldOptions.className='rgbColorPicker' value.onchange='testFunction'
-    export function colNumPicker(value: number) {
-        return value;
-    }
 
     /**
      * Returns list of 12 LEDs
@@ -297,6 +278,7 @@ namespace brightboard {
 		brightDisplay.setPixelRGB(led, rgb);
 	 }
 	 
+
 	 /**
 	  * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
 	  * @param colorList list of colors to set
