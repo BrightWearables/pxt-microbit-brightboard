@@ -31,9 +31,8 @@ enum pixelType{
 	TYPE_DOTSTAR=1
 }
 
-//% color=#cb42f5 icon="\uf185" groups=["others", "animations", colors]  
+//% color=#cb42f5 icon="\uf185" groups=["others", "animations", "colors"]  
 namespace brightboard {
-	let colorOptions='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#f3f2da","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#ff3790","#ff0e36","#000000", "#C3C6D8", "#727474", "#171717"]';
 	
     /**
 	 * To be used as a shadow block
@@ -45,7 +44,7 @@ namespace brightboard {
     //% shim=TD_ID colorSecondary="#FFFFFF"
     //% value.fieldEditor="colornumber" value.fieldOptions.decompileLiterals=true
     //% value.defl='#ff0000'
-    //% value.fieldOptions.colours=colorOptions;
+    //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#f3f2da","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#ff3790","#ff0e36","#000000", "#C3C6D8", "#727474", "#171717"]'
     //% value.fieldOptions.columns=5 value.fieldOptions.className='rgbColorPicker' 
     export function __colorNumberPicker(value: number) {
         return value;
@@ -64,7 +63,7 @@ namespace brightboard {
     //% shim=TD_ID colorSecondary="#FFFFFF"
     //% value.fieldEditor="colornumber" value.fieldOptions.decompileLiterals=true
     //% value.defl='#ff0000'
-    //% value.fieldOptions.colours=colorOptions;
+    //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#f3f2da","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#ff3790","#ff0e36","#000000", "#C3C6D8", "#727474", "#171717"]'
     //% value.fieldOptions.columns=5 value.fieldOptions.className='rgbColorPicker' value.onchange='testFunction'
     export function colNumPicker(value: number) {
         return value;
