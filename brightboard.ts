@@ -34,8 +34,8 @@ enum pixelType{
 //% color=#cb42f5 icon="\uf185" groups=["others", "animations", colors]  
 namespace brightboard {
 	
-
     /**
+	 * To be used as a shadow block
      * Get the color wheel field editor
      * @param color color, eg: #ff0000
      */
@@ -47,6 +47,21 @@ namespace brightboard {
     //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#f3f2da","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#ff3790","#ff0e36","#000000", "#C3C6D8", "#727474", "#171717"]'
     //% value.fieldOptions.columns=5 value.fieldOptions.className='rgbColorPicker'
     export function __colorNumberPicker(value: number) {
+        return value;
+    }
+	
+	/**
+	 * non shadow block version
+     * Get the color wheel field editor
+     * @param color color, eg: #ff0000
+     */
+    //% blockId=brightColNumPicker block="%value"
+    //% shim=TD_ID colorSecondary="#FFFFFF"
+    //% value.fieldEditor="colornumber" value.fieldOptions.decompileLiterals=true
+    //% value.defl='#ff0000'
+    //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#f3f2da","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#ff3790","#ff0e36","#000000", "#C3C6D8", "#727474", "#171717"]'
+    //% value.fieldOptions.columns=5 value.fieldOptions.className='rgbColorPicker'
+    export function colNumPicker(value: number) {
         return value;
     }
 
@@ -110,7 +125,7 @@ namespace brightboard {
 			this.brightness = 128;
 			this.buf = pins.createBuffer(this._length * this._stride);
 			this.start = 0;
-			this._mode = colorMode.MODE_RGB;
+			this._mode = colorMode.MODE_GRB;
 			this._pixelType = pixelType.TYPE_NEOPIXEL;
 		}
 			
@@ -361,17 +376,6 @@ namespace brightboard {
 		return packRGB(R, G, B);
 	 }
 	 
-	/**
-	 * single RGB color with dropdown color number picker 
-	 * @param rgb color value eg:0xff0000
-	 */
-	//% blockId=brightboard_color_chooser block="%rgb"
-	//% rgb.shadow="brightColorNumberPicker" weight=125
-	export function pickColor(rgb: number): number {
-		return rgb;
-	}
-	
-
 	
 	/**
      * Converts a hue saturation luminosity value into a RGB color
