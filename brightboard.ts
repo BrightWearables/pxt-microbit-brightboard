@@ -42,7 +42,7 @@ namespace brightboard {
     //% blockId=brightColorNumberPicker block="%value"
     //% shim=TD_ID colorSecondary="#FFFFFF"
     //% value.fieldEditor="colornumber" value.fieldOptions.decompileLiterals=true
-    //% value.defl='#ff0000' group=colors
+    //% value.defl='#ff0000' group=colors weight=150
     //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#f3f2da","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#ff3790","#ff0e36","#000000", "#C3C6D8", "#727474", "#171717"]'
     //% value.fieldOptions.columns=5 value.fieldOptions.className='rgbColorPicker' 
     export function __colorNumberPicker(value: number) {
@@ -66,6 +66,7 @@ namespace brightboard {
      * @param ledval12 eg:0xFF007F
      */
     //% blockId="color_for_led" block="$ledval1|$ledval2|$ledval3|$ledval4|$ledval5|$ledval6|$ledval7|$ledval8|$ledval9|$ledval10|$ledval11|$ledval12"
+	//% weight=100
     //% ledval1.shadow="brightColorNumberPicker"
     //% ledval2.shadow="brightColorNumberPicker"
     //% ledval3.shadow="brightColorNumberPicker"
@@ -112,6 +113,7 @@ namespace brightboard {
     //% ledval11.shadow="brightColorNumberPicker"
     //% ledval12.shadow="brightColorNumberPicker"
     //% inlineInputMode=inline group=colors
+	//% weight=125
     export function colorForLedVariableLength(ledval1: number, ledval2: number, ledval3?: number, ledval4?: number, ledval5?: number, ledval6?: number, ledval7?: number, ledval8?: number, ledval9?: number, ledval10?: number, ledval11?: number, ledval12?: number): Array<number> {
 		let colorList = [ledval1, ledval2];
         if (typeof ledval3 !== 'undefined') colorList.push(ledval3);
@@ -293,7 +295,7 @@ namespace brightboard {
 	 * Get the brightness of the pixel strip.
 	*/
 	//% blockId="brightboard_get_brightness" block="brightness"
-	//% weight=7 blockGap=8
+	//% weight=7
 	export function brightness(): number {
 		return brightDisplay.getBrightness();
 	}
@@ -326,7 +328,7 @@ namespace brightboard {
 	  * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
 	  * @param colorList list of colors to set pattern from
 	  */ 
-	  //% blockId=brightboard_set_pixel_array block="use pattern %colorList"
+	  //% blockId=brightboard_set_pixel_array block="set pattern %colorList"
 	  //% colorList.shadow="unset" group=actions
 	  export function setPixelArray(colorList: Array<number>): void {
         let len = colorList.length;
@@ -402,6 +404,7 @@ namespace brightboard {
 	 */
 	 //% blockId=brightboard_rgb block="R %R|G %G|B %B"
 	 //% R.min=0 R.max=255 G.min=0 G.max=255 B.min=0 B.max=255 group=colors
+	 //% weight=90
 	 export function rgbColor(R: number, G: number, B: number): number {
 		return packRGB(R, G, B);
 	 }
@@ -415,7 +418,7 @@ namespace brightboard {
      */
     //% blockId=brightboardHSL block="hue %h|saturation %s|luminosity %l"
 	//% h.defl=0 h.shadow="colorWheelHsvPicker" h.min=0 h.max=255 s.defl=99 s.min=0 s.max=99 l.defl=50 l.min=0 l.max=99
-	//% group=colors
+	//% group=colors weight=80
     export function hsl2rgb(h: number, s: number, l: number): number {
         h = Math.round(h);
         s = Math.round(s);
@@ -474,7 +477,7 @@ namespace brightboard {
 	 * Generate a random color
 	 */
 	 //% blockId=brightboard_random_color block="random color" weight=75
-	 //% group=colors
+	 //% group=colors weight=70
 	 export function randomColor(): number {
 		return hsl2rgb(Math.randomRange(0, 359), 99, 50);
 	 }
