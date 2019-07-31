@@ -169,16 +169,6 @@ namespace brightboard {
       }
 	
 	
-	  function setBufferRGB(buf: Buffer, mode: ColorMode, offset: number, red: number, green: number, blue: number): void {
-        if (mode === ColorMode.MODE_RGB) {
-            buf[offset + 0] = red;
-            buf[offset + 1] = green;
-        } else {
-            buf[offset + 0] = green;
-            buf[offset + 1] = red;
-        }
-        buf[offset + 2] = blue;
-    }
 
     // Functions for reading light from the brightboard in lux or straight adv value
 	export class BrightBoardDisplay {
@@ -227,6 +217,16 @@ namespace brightboard {
 			this._brightness = bright;
 		}
 		
+	    setBufferRGB(offset: number, red: number, green: number, blue: number): void {
+        if (this._mode === ColorMode.MODE_RGB) {
+            this.buf[offset + 0] = red;
+            this.buf[offset + 1] = green;
+        } else {
+            this.buf[offset + 0] = green;
+            this.buf[offset + 1] = red;
+        }
+        this.buf[offset + 2] = blue;
+	  }
 	
 
         setAllRGB(rgb: number) {
@@ -240,9 +240,9 @@ namespace brightboard {
                 green = (green * br) >> 8;
                 blue = (blue * br) >> 8;
             }
-            const end = this.start + this._length; 
-            for (let i = 0; i < end; i++) {
-				setBufferRGB(this.buf, this._mode, i*this._stride, red, green, blue);
+			let stride = this._stride;
+            for (let i = 0; i < this._length; i++) {
+				this.setBufferRGB(i*stride, red, green, blue);
 			}
         }
 
@@ -265,7 +265,7 @@ namespace brightboard {
                 green = (green * br) >> 8;
                 blue = (blue * br) >> 8;
             }
-            setBufferRGB(this.buf, this._mode, pixeloffset, red, green, blue)
+            this.setBufferRGB(pixeloffset, red, green, blue)
         }		
 
 	}
@@ -311,8 +311,8 @@ namespace brightboard {
 	/**
 	 * Fades from the pattern currently in the buffer to the specified pattern
 	 */
-	export function fadeToPattern(pattern: ColorPattern): void {
-	}
+	//export function fadeToPattern(pattern: ColorPattern): void {
+	//}
 	
 	/**
 	 * clear the pixel strip
@@ -334,7 +334,6 @@ namespace brightboard {
 	export function doClear() : void {
 		spiClear(brightDisplay.buffer(), brightDisplay.length());
 	}
-	
 	
 
 			
@@ -400,13 +399,11 @@ namespace brightboard {
     }
 	
 	 
-
-	
 	/**
 	 * sets all pixels on BrightBoard to the same color - must select show to execute
 	 * @param rgb color for pixels eg:0xff0000
 	 */
-	 //% blockId=set_board_color block="set all pixels $rgb"
+	 //% blockId=set_board_color block="set all pixels %rgb"
 	 //% rgb.shadow="brightColorNumberPicker" group=actions
 	export function setBoardColor(rgb: number): void {
 		brightDisplay.setAllRGB(rgb);
