@@ -98,7 +98,7 @@ namespace brightboard {
      * @param ledval11 eg:0xFE00FF
      * @param ledval12 eg:0xFF007F
      */
-    //% blockId="color_for_led" block="$ledval1||$ledval2|$ledval3|$ledval4|$ledval5|$ledval6|$ledval7|$ledval8|$ledval9|$ledval10|$ledval11|$ledval12"
+    //% blockId="variable_color_for_led" block="$ledval1||$ledval2|$ledval3|$ledval4|$ledval5|$ledval6|$ledval7|$ledval8|$ledval9|$ledval10|$ledval11|$ledval12"
     //% ledval1.shadow="brightColorNumberPicker"
     //% ledval2.shadow="brightColorNumberPicker"
     //% ledval3.shadow="brightColorNumberPicker"
