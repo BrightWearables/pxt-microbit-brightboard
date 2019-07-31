@@ -19,20 +19,22 @@
  * Functions to operate the brightboard
  */
 
-enum colorMode{
-	MODE_RGB = 0,
-	MODE_GRB = 1
-}
 
-enum pixelType{
-	//% block="neopixel"
-	TYPE_NEOPIXEL=0,
-	//% block="dotstar"
-	TYPE_DOTSTAR=1
-}
 
 //% color=#65d6e0 icon="\uf185" groups=["colors", "actions", "animations", "others"]  
 namespace brightboard {
+	
+	enum colorMode{
+		MODE_RGB = 0,
+		MODE_GRB = 1
+	}
+
+	enum pixelType{
+		//% block="neopixel"
+		TYPE_NEOPIXEL=0,
+		//% block="dotstar"
+		TYPE_DOTSTAR=1
+	}
 	
     /**
 	 * To be used as a shadow block containing custom colors
@@ -52,26 +54,30 @@ namespace brightboard {
 	// Create a class to hold variable length lists of colors. Since colors are represented 
 	// by hex numbers, it becomes challenging to create blocks to represent arrays of colors
 	// without having them show up as arrays of numbers
-	class ColorPattern {
+	export class ColorPattern {
 		_colorList: Array<number>;
 		
-		constructor(val:any) {
-			this._colorList = [];
-			if (typeof val === 'number') {
-				this._colorList.push(val);
-			} else if (typeof val === 'string') {
-				this._colorList.push(parseInt(val));
-			} else if (val.isArray() && val.length > 0) {
-				if (typeof val[0] === 'number') {
-					this._colorList=val.slice(0);
-				}
-			} else {
-				//do something sensible
-			}
+		constructor(val:Array<number>) {
+			this._colorList=val.slice(0);
 		}
 		
 		getColors() : Array<number> {
 			return this._colorList;
+		}
+		
+		// Returns an array with the same number of elements as LEDs
+		expandPattern() : Array<number> {
+			let len = this._colorList.length;
+			let allPixels = [];
+			let index = 0;
+			for (let i = 0; i < brightDisplay._length; i++) {
+				allPixels.push(this._colorList[index]);
+				index = index + 1;
+				if (index >= len) {
+				   index = 0;
+				}
+			}
+			return allPixels;
 		}
 	}
 
@@ -159,17 +165,12 @@ namespace brightboard {
 	  * @param colorList list of colors that repeat to form a pattern
 	  */ 
 	  //% blockId=brightboard_set_pixel_array block="set pattern %colPattern"
-	  //% group=actions %colPattern.shadow=variable_color_for_led
-	  export function setPixelArray(colors : ColorPattern): void {
-		let colorList = colors.getColors();
-        let len = colorList.length;
-        let index = 0;
+	  //% group=actions colPattern.shadow=variable_color_for_led
+	  export function setPattern(colors : ColorPattern): void {
+		let colorList = colors.expandPattern();
         for (let i = 0; i < brightDisplay._length; i++) {
-			brightDisplay.setPixelRGB(i, colorList[index]);
-            index = index + 1;
-            if (index >= len) {
-               index = 0;
-            }
+			brightDisplay.setPixelRGB(i, colorList[i]);
+
         }
 	 }
 
