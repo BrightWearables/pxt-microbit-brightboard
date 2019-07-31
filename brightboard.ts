@@ -83,6 +83,50 @@ namespace brightboard {
         return [ledval1, ledval2, ledval3, ledval4, ledval5, ledval6, ledval7, ledval8, ledval9, ledval10, ledval11, ledval12];
     }
 
+    /**
+     * Returns list of 12 LEDs
+     * @param ledval1 eg:0xff0000
+     * @param ledval2 eg:0xFF7F00
+     * @param ledval3 eg:0xFFFE00
+     * @param ledval4 eg:0x7FFF00
+     * @param ledval5 eg:0x00FF00
+     * @param ledval6 eg:0x00FF7F
+     * @param ledval7 eg:0x00FFFE
+     * @param ledval8 eg:0x007FFF
+     * @param ledval9 eg:0x0000FF
+     * @param ledval10 eg:0x7F00FF
+     * @param ledval11 eg:0xFE00FF
+     * @param ledval12 eg:0xFF007F
+     */
+    //% blockId="color_for_led" block="$ledval1||$ledval2|$ledval3|$ledval4|$ledval5|$ledval6|$ledval7|$ledval8|$ledval9|$ledval10|$ledval11|$ledval12"
+    //% ledval1.shadow="brightColorNumberPicker"
+    //% ledval2.shadow="brightColorNumberPicker"
+    //% ledval3.shadow="brightColorNumberPicker"
+    //% ledval4.shadow="brightColorNumberPicker"
+    //% ledval5.shadow="brightColorNumberPicker"
+    //% ledval6.shadow="brightColorNumberPicker"
+    //% ledval7.shadow="brightColorNumberPicker"
+    //% ledval8.shadow="brightColorNumberPicker"
+    //% ledval9.shadow="brightColorNumberPicker"
+    //% ledval10.shadow="brightColorNumberPicker"
+    //% ledval11.shadow="brightColorNumberPicker"
+    //% ledval12.shadow="brightColorNumberPicker"
+    //% inlineInputMode=inline
+    export function colorForLedVariableLength(ledval1: number, ledval2?: number, ledval3?: number, ledval4?: number, ledval5?: number, ledval6?: number, ledval7?: number, ledval8?: number, ledval9?: number, ledval10?: number, ledval11?: number, ledval12?: number): Array<number> {
+		let colorList = [ledval1];
+		if (typeof ledval2 !== 'undefined') colorList.push(ledval2);
+        if (typeof ledval3 !== 'undefined') colorList.push(ledval3);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval4);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval5);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval6);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval7);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval8);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval9);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval10);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval11);
+        if (typeof ledval4 !== 'undefined') colorList.push(ledval12);	
+		return colorList;
+    }
 
     // Functions for reading light from the brightboard in lux or straight adv value
 	export class BrightBoardDisplay {
