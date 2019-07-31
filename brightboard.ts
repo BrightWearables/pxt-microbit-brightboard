@@ -21,15 +21,15 @@
 
 
 
-//% color=#65d6e0 icon="\uf185" groups=["colors", "actions", "animations", "others"]  
+//% color=#65d6e0 icon="\uf185" groups=["colors", "patterns", "actions", "animations", "others"]  
 namespace brightboard {
 	
-	enum colorMode{
+	enum ColorMode{
 		MODE_RGB = 0,
 		MODE_GRB = 1
 	}
 
-	enum pixelType{
+	enum PixelType{
 		//% block="neopixel"
 		TYPE_NEOPIXEL=0,
 		//% block="dotstar"
@@ -65,19 +65,17 @@ namespace brightboard {
 			return this._colorList;
 		}
 		
-		// Returns an array with the same number of elements as LEDs
-		expandPattern() : Array<number> {
-			let len = this._colorList.length;
-			let allPixels = [];
+		// fills a Buffer with the pattern
+		fillBufferWithPattern() : void {
+			let len = brightDisplay.length();
 			let index = 0;
-			for (let i = 0; i < brightDisplay._length; i++) {
-				allPixels.push(this._colorList[index]);
+			for (let i = 0; i < len; i++) {
+				brightDisplay.setPixelRGB(i, this._colorList[index]);
 				index = index + 1;
 				if (index >= len) {
 				   index = 0;
 				}
 			}
-			return allPixels;
 		}
 	}
 
@@ -110,7 +108,7 @@ namespace brightboard {
     //% ledval10.shadow="brightColorNumberPicker"
     //% ledval11.shadow="brightColorNumberPicker"
     //% ledval12.shadow="brightColorNumberPicker"
-    //% inlineInputMode=inline group=colors
+    //% inlineInputMode=inline group=patterns
     export function colorForLed(ledval1: number, ledval2: number, ledval3: number, ledval4: number, ledval5: number, ledval6: number, ledval7: number, ledval8: number, ledval9: number, ledval10: number, ledval11: number, ledval12: number): ColorPattern {
         return new ColorPattern([ledval1, ledval2, ledval3, ledval4, ledval5, ledval6, ledval7, ledval8, ledval9, ledval10, ledval11, ledval12]);
     }
@@ -143,7 +141,7 @@ namespace brightboard {
     //% ledval10.shadow="brightColorNumberPicker"
     //% ledval11.shadow="brightColorNumberPicker"
     //% ledval12.shadow="brightColorNumberPicker"
-    //% inlineInputMode=inline group=colors
+    //% inlineInputMode=inline group=patterns
 	//% weight=125
     export function colorForLedVariableLength(ledval1: number, ledval2: number, ledval3?: number, ledval4?: number, ledval5?: number, ledval6?: number, ledval7?: number, ledval8?: number, ledval9?: number, ledval10?: number, ledval11?: number, ledval12?: number): ColorPattern {
 		let colorList = [ledval1, ledval2];
@@ -165,14 +163,11 @@ namespace brightboard {
 	  * @param colorList list of colors that repeat to form a pattern
 	  */ 
 	  //% blockId=brightboard_set_pixel_array block="set pattern %colPattern"
-	  //% group=actions colPattern.shadow=variable_color_for_led
+	  //% group=patterns colPattern.shadow=variable_color_for_led
 	  export function setPattern(colors : ColorPattern): void {
-		let colorList = colors.expandPattern();
-        for (let i = 0; i < brightDisplay._length; i++) {
-			brightDisplay.setPixelRGB(i, colorList[i]);
-
-        }
-	 }
+			colors.fillBufferWithPattern();
+      }
+	
 
     // Functions for reading light from the brightboard in lux or straight adv value
 	export class BrightBoardDisplay {
@@ -180,7 +175,7 @@ namespace brightboard {
 		buf: Buffer;   //Buffer for pixel data
         dataPin: DigitalPin;
 		clkPin: DigitalPin;
-        brightness: number;
+        _brightness: number;
 		// per pixel scaling. This buffer is allocated on-demand when per-pixel brightness is needed.
         // when rendering, if this buffer is null, use _brightness instead
         _brightnessBuf: Buffer;
@@ -189,41 +184,41 @@ namespace brightboard {
         start: number;
         _stride: number;  //bits per pixel
         _length: number;  //number of pixels (12)
-		_mode: colorMode;
-		_pixelType: pixelType;
+		_mode: ColorMode;
+		_pixelType: PixelType;
 		
 		constructor(dataPin: DigitalPin, clkPin: DigitalPin) {
         	this.dataPin = dataPin;
 			this.clkPin = clkPin;
 			this._length = 12;
 			this._stride = 3;
-			this.brightness = 128;
+			this._brightness = 128;
 			this.buf = pins.createBuffer(this._length * this._stride);
 			this.start = 0;
-			this._mode = colorMode.MODE_GRB;
-			this._pixelType = pixelType.TYPE_NEOPIXEL;
+			this._mode = ColorMode.MODE_GRB;
+			this._pixelType = PixelType.TYPE_NEOPIXEL;
 		}
 			
 
-		getBuffer(): Buffer {
+		buffer(): Buffer {
 			return this.buf;
 		}
 		
-		getLength(): number {
+		length(): number {
 			return this._length;
 		}
 
-		getBrightness(): number {
-		   return this.brightness;
+		brightness(): number {
+		   return this._brightness;
 		}
 		
 		setBrightness(bright: number): void {
-			this.brightness = bright;
+			this._brightness = bright;
 		}
 		
 		
        setBufferRGB(offset: number, red: number, green: number, blue: number): void {
-            if (this._mode === colorMode.MODE_RGB) {
+            if (this._mode === ColorMode.MODE_RGB) {
                 this.buf[offset + 0] = red;
                 this.buf[offset + 1] = green;
             } else {
@@ -238,7 +233,7 @@ namespace brightboard {
             let green = unpackG(rgb);
             let blue = unpackB(rgb);
 
-            const br = this.brightness;
+            const br = this._brightness();
             if (br < 255) {
                 red = (red * br) >> 8;
                 green = (green * br) >> 8;
@@ -263,7 +258,7 @@ namespace brightboard {
             let green = unpackG(rgb);
             let blue = unpackB(rgb);
 
-            let br = this.brightness;
+            let br = this._brightness;
             if (br < 255) {
                 red = (red * br) >> 8;
                 green = (green * br) >> 8;
@@ -282,9 +277,9 @@ namespace brightboard {
 	 * @param type the type of pixels used: eg:pixelType.TYPE_DOTSTAR
 	 */
 	 //% blockId=brightboard_set_pixel_type block="set pixel type %type"
-	 //% pixelType.defl=pixelType.TYPE_DOTSTAR
+	 //% type.defl=brightboard.PixelType.TYPE_DOTSTAR
 	 //% advanced=true
-	 export function setPixelType(type: pixelType): void {
+	 export function setPixelType(type: PixelType): void {
 		brightDisplay._pixelType=type;
 	 }
 		 
@@ -305,11 +300,17 @@ namespace brightboard {
 	 */
 	 //% blockId=brightboard_show block="show" weight=150 group=actions
 	export function show(): void {
-		if (brightDisplay._pixelType == pixelType.TYPE_DOTSTAR) {
-			spiSendBuffer(brightDisplay.getBuffer(), brightDisplay.getLength());
+		if (brightDisplay._pixelType == PixelType.TYPE_DOTSTAR) {
+			spiSendBuffer(brightDisplay.buffer(), brightDisplay.length());
 		} else {
-			ws2812b.sendBuffer(brightDisplay.getBuffer(), DigitalPin.P0);
+			ws2812b.sendBuffer(brightDisplay.buffer(), DigitalPin.P0);
 		}
+	}
+	
+	/**
+	 * Fades from the pattern currently in the buffer to the specified pattern
+	 */
+	export function fadeToPattern(pattern: ColorPattern): void {
 	}
 	
 	/**
@@ -330,7 +331,7 @@ namespace brightboard {
 	 */
 	 //% blockId=brightboard_clear block="clear" weight=140 group=actions
 	export function doClear() : void {
-		spiClear(brightDisplay.getBuffer(), brightDisplay.getLength());
+		spiClear(brightDisplay.buffer(), brightDisplay.length());
 	}
 	
 	
@@ -342,7 +343,7 @@ namespace brightboard {
 	//% blockId="brightboard_get_brightness" block="brightness"
 	//% weight=7
 	export function brightness(): number {
-		return brightDisplay.getBrightness();
+		return brightDisplay.brightness();
 	}
 	
 	
@@ -380,7 +381,7 @@ namespace brightboard {
 		let stride = brightDisplay._stride;
 		let start = brightDisplay.start;
 		let len = brightDisplay._length;
-		brightDisplay.getBuffer().rotate(-offset * stride, start * stride, len * stride);
+		brightDisplay.buffer().rotate(-offset * stride, start * stride, len * stride);
     }
 	
 	 /**
@@ -394,7 +395,7 @@ namespace brightboard {
 		let stride = brightDisplay._stride;
 		let start = brightDisplay.start;
 		let len = brightDisplay._length;
-		brightDisplay.getBuffer().shift(-offset * stride, start * stride, len * stride);
+		brightDisplay.buffer().shift(-offset * stride, start * stride, len * stride);
     }
 	
 	 
