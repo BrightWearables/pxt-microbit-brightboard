@@ -98,7 +98,7 @@ namespace brightboard {
      * @param ledval11 eg:0xFE00FF
      * @param ledval12 eg:0xFF007F
      */
-    //% blockId="variable_color_for_led" block="$ledval1||$ledval2|$ledval3|$ledval4|$ledval5|$ledval6|$ledval7|$ledval8|$ledval9|$ledval10|$ledval11|$ledval12"
+    //% blockId="variable_color_for_led" block="$ledval1|$ledval2||$ledval3|$ledval4|$ledval5|$ledval6|$ledval7|$ledval8|$ledval9|$ledval10|$ledval11|$ledval12"
     //% ledval1.shadow="brightColorNumberPicker"
     //% ledval2.shadow="brightColorNumberPicker"
     //% ledval3.shadow="brightColorNumberPicker"
@@ -112,9 +112,8 @@ namespace brightboard {
     //% ledval11.shadow="brightColorNumberPicker"
     //% ledval12.shadow="brightColorNumberPicker"
     //% inlineInputMode=inline
-    export function colorForLedVariableLength(ledval1: number, ledval2?: number, ledval3?: number, ledval4?: number, ledval5?: number, ledval6?: number, ledval7?: number, ledval8?: number, ledval9?: number, ledval10?: number, ledval11?: number, ledval12?: number): Array<number> {
-		let colorList = [ledval1];
-		if (typeof ledval2 !== 'undefined') colorList.push(ledval2);
+    export function colorForLedVariableLength(ledval1: number, ledval2: number, ledval3?: number, ledval4?: number, ledval5?: number, ledval6?: number, ledval7?: number, ledval8?: number, ledval9?: number, ledval10?: number, ledval11?: number, ledval12?: number): Array<number> {
+		let colorList = [ledval1, ledval2];
         if (typeof ledval3 !== 'undefined') colorList.push(ledval3);
         if (typeof ledval4 !== 'undefined') colorList.push(ledval4);
         if (typeof ledval4 !== 'undefined') colorList.push(ledval5);
@@ -325,9 +324,9 @@ namespace brightboard {
 
 	 /**
 	  * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
-	  * @param colorList list of colors to set
+	  * @param colorList list of colors to set pattern from
 	  */ 
-	  //% blockId=brightboard_set_pixel_array block="set color list $colorList"
+	  //% blockId=brightboard_set_pixel_array block="use pattern %colorList"
 	  export function setPixelArray(colorList: Array<number>): void {
         let len = colorList.length;
         let index = 0;
