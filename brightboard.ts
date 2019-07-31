@@ -70,7 +70,7 @@ namespace brightboard {
 			let len = brightDisplay.length();
 			let index = 0;
 			for (let i = 0; i < len; i++) {
-				brightDisplay.setPixelRGB(i, this._colorList[index]);
+				brightDisplay.setPixelColor(i, this._colorList[index]);
 				index = index + 1;
 				if (index >= len) {
 				   index = 0;
@@ -168,6 +168,17 @@ namespace brightboard {
 			colors.fillBufferWithPattern();
       }
 	
+	
+	  function setBufferRGB(buf: Buffer, mode: ColorMode, offset: number, red: number, green: number, blue: number): void {
+        if (mode === ColorMode.MODE_RGB) {
+            buf[offset + 0] = red;
+            buf[offset + 1] = green;
+        } else {
+            buf[offset + 0] = green;
+            buf[offset + 1] = red;
+        }
+        buf[offset + 2] = blue;
+    }
 
     // Functions for reading light from the brightboard in lux or straight adv value
 	export class BrightBoardDisplay {
@@ -216,17 +227,7 @@ namespace brightboard {
 			this._brightness = bright;
 		}
 		
-		
-       setBufferRGB(offset: number, red: number, green: number, blue: number): void {
-            if (this._mode === ColorMode.MODE_RGB) {
-                this.buf[offset + 0] = red;
-                this.buf[offset + 1] = green;
-            } else {
-                this.buf[offset + 0] = green;
-                this.buf[offset + 1] = red;
-            }
-            this.buf[offset + 2] = blue;
-        }
+	
 
         setAllRGB(rgb: number) {
             let red = unpackR(rgb);
@@ -241,12 +242,12 @@ namespace brightboard {
             }
             const end = this.start + this._length; 
             for (let i = 0; i < end; i++) {
-				this.setBufferRGB(i, red, green, blue);
+				setBufferRGB(this.buf, this._mode, i*this._stride, red, green, blue);
 			}
         }
 
 		
-        setPixelRGB(pixeloffset: number, rgb: number): void {
+        setPixelColor(pixeloffset: number, rgb: number): void {
             if (pixeloffset < 0
                 || pixeloffset >= this._length)
                 return;
@@ -264,7 +265,7 @@ namespace brightboard {
                 green = (green * br) >> 8;
                 blue = (blue * br) >> 8;
             }
-            this.setBufferRGB(pixeloffset, red, green, blue)
+            setBufferRGB(this.buf, this._mode, pixeloffset, red, green, blue)
         }		
 
 	}
@@ -366,7 +367,7 @@ namespace brightboard {
 	 //% blockId=brightboard_set_pixel_color block="set pixel %led| to %rgb"
 	 //% led.min=1 led.max=12 rgb.shadow="brightColorNumberPicker" group=actions
 	 export function setPixelColor(led: number, rgb: number) {
-		brightDisplay.setPixelRGB(led, rgb);
+		brightDisplay.setPixelColor(led, rgb);
 	 }
 	 
 	 
