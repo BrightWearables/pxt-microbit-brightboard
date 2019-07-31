@@ -31,7 +31,7 @@ enum pixelType{
 	TYPE_DOTSTAR=1
 }
 
-//% color=#cb42f5 icon="\uf185" groups=["others", "animations", "colors"]  
+//% color=#cb42f5 icon="\uf185" groups=["colors", "actions", "animations", "others"]  
 namespace brightboard {
 	
     /**
@@ -42,7 +42,7 @@ namespace brightboard {
     //% blockId=brightColorNumberPicker block="%value"
     //% shim=TD_ID colorSecondary="#FFFFFF"
     //% value.fieldEditor="colornumber" value.fieldOptions.decompileLiterals=true
-    //% value.defl='#ff0000'
+    //% value.defl='#ff0000' group=colors
     //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#f3f2da","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#ff3790","#ff0e36","#000000", "#C3C6D8", "#727474", "#171717"]'
     //% value.fieldOptions.columns=5 value.fieldOptions.className='rgbColorPicker' 
     export function __colorNumberPicker(value: number) {
@@ -78,13 +78,13 @@ namespace brightboard {
     //% ledval10.shadow="brightColorNumberPicker"
     //% ledval11.shadow="brightColorNumberPicker"
     //% ledval12.shadow="brightColorNumberPicker"
-    //% inlineInputMode=inline
+    //% inlineInputMode=inline group=colors
     export function colorForLed(ledval1: number, ledval2: number, ledval3: number, ledval4: number, ledval5: number, ledval6: number, ledval7: number, ledval8: number, ledval9: number, ledval10: number, ledval11: number, ledval12: number): Array<number> {
         return [ledval1, ledval2, ledval3, ledval4, ledval5, ledval6, ledval7, ledval8, ledval9, ledval10, ledval11, ledval12];
     }
 
     /**
-     * Returns list of 12 LEDs
+     * Returns variable length list of up to 12 LED colors
      * @param ledval1 eg:0xff0000
      * @param ledval2 eg:0xFF7F00
      * @param ledval3 eg:0xFFFE00
@@ -111,7 +111,7 @@ namespace brightboard {
     //% ledval10.shadow="brightColorNumberPicker"
     //% ledval11.shadow="brightColorNumberPicker"
     //% ledval12.shadow="brightColorNumberPicker"
-    //% inlineInputMode=inline
+    //% inlineInputMode=inline group=colors
     export function colorForLedVariableLength(ledval1: number, ledval2: number, ledval3?: number, ledval4?: number, ledval5?: number, ledval6?: number, ledval7?: number, ledval8?: number, ledval9?: number, ledval10?: number, ledval11?: number, ledval12?: number): Array<number> {
 		let colorList = [ledval1, ledval2];
         if (typeof ledval3 !== 'undefined') colorList.push(ledval3);
@@ -256,7 +256,7 @@ namespace brightboard {
 	/**
 	 * Sends the color buffer to the pixels
 	 */
-	 //% blockId=brightboard_show block="show" weight=150
+	 //% blockId=brightboard_show block="show" weight=150 group=actions
 	export function show(): void {
 		if (brightDisplay._pixelType == pixelType.TYPE_DOTSTAR) {
 			spiSendBuffer(brightDisplay.getBuffer(), brightDisplay.getLength());
@@ -272,7 +272,7 @@ namespace brightboard {
 	 * dummy function pass through for C function
 	 */
 	 //% blockId=brightboard_spi_clear blockHidde=true
-	 //% shim=brightboard::clear weight=150
+	 //% shim=brightboard::clear weight=150 group=actions
 	export function spiClear(buf: Buffer, len: number):void {
 		// Fake function for simulator
 		return;
@@ -281,7 +281,7 @@ namespace brightboard {
 	/**
 	 * Clears the pixel strip - must call show to see effect
 	 */
-	 //% blockId=brightboard_clear block="clear" weight=140
+	 //% blockId=brightboard_clear block="clear" weight=140 group=actions
 	export function doClear() : void {
 		spiClear(brightDisplay.getBuffer(), brightDisplay.getLength());
 	}
@@ -316,7 +316,7 @@ namespace brightboard {
 	 * @param rgb color to set pixel to eg:0xff0000
 	 */
 	 //% blockId=brightboard_set_pixel_color block="set pixel %led| to %rgb"
-	 //% led.min=1 led.max=12 rgb.shadow="brightColorNumberPicker"
+	 //% led.min=1 led.max=12 rgb.shadow="brightColorNumberPicker" group=actions
 	 export function setPixelColor(led: number, rgb: number) {
 		brightDisplay.setPixelRGB(led, rgb);
 	 }
@@ -327,6 +327,7 @@ namespace brightboard {
 	  * @param colorList list of colors to set pattern from
 	  */ 
 	  //% blockId=brightboard_set_pixel_array block="use pattern %colorList"
+	  //% colorList.shadow="unset" group=actions
 	  export function setPixelArray(colorList: Array<number>): void {
         let len = colorList.length;
         let index = 0;
@@ -345,8 +346,8 @@ namespace brightboard {
 	  * You need to call show to make the changes visible.
 	  * @param offset rotation steps eg:1
 	  */
-	 //% blockId=brightboard_rotate block="rotate pattern by $offset"
-	 //% offset.min=-12 offset.max=12
+	 //% blockId=brightboard_rotate block="rotate pixels by $offset"
+	 //% offset.min=-12 offset.max=12 group=actions
 	 export function rotate(offset: number): void {
 		let stride = brightDisplay._stride;
 		let start = brightDisplay.start;
@@ -359,8 +360,8 @@ namespace brightboard {
 	  * You need to call show to make the changes visible.
 	  * @param offset shift steps eg:1
 	  */
-	 //% blockId=brightboard_shift block="shift pattern by $offset"
-	 //% offset.min=-12 offset.max=12
+	 //% blockId=brightboard_shift block="shift pixels by $offset"
+	 //% offset.min=-12 offset.max=12 group=actions
 	 export function shift(offset: number): void {
 		let stride = brightDisplay._stride;
 		let start = brightDisplay.start;
@@ -376,7 +377,7 @@ namespace brightboard {
 	 * @param rgb color for pixels eg:0xff0000
 	 */
 	 //% blockId=set_board_color block="set all pixels $rgb"
-	 //% rgb.shadow="brightColorNumberPicker"
+	 //% rgb.shadow="brightColorNumberPicker" group=actions
 	export function setBoardColor(rgb: number): void {
 		brightDisplay.setAllRGB(rgb);
 	}
@@ -400,7 +401,7 @@ namespace brightboard {
 	 * @param B blue value eg:0
 	 */
 	 //% blockId=brightboard_rgb block="R %R|G %G|B %B"
-	 //% R.min=0 R.max=255 G.min=0 G.max=255 B.min=0 B.max=255
+	 //% R.min=0 R.max=255 G.min=0 G.max=255 B.min=0 B.max=255 group=colors
 	 export function rgbColor(R: number, G: number, B: number): number {
 		return packRGB(R, G, B);
 	 }
@@ -414,6 +415,7 @@ namespace brightboard {
      */
     //% blockId=brightboardHSL block="hue %h|saturation %s|luminosity %l"
 	//% h.defl=0 h.shadow="colorWheelHsvPicker" h.min=0 h.max=255 s.defl=99 s.min=0 s.max=99 l.defl=50 l.min=0 l.max=99
+	//% group=colors
     export function hsl2rgb(h: number, s: number, l: number): number {
         h = Math.round(h);
         s = Math.round(s);
@@ -472,6 +474,7 @@ namespace brightboard {
 	 * Generate a random color
 	 */
 	 //% blockId=brightboard_random_color block="random color" weight=75
+	 //% group=colors
 	 export function randomColor(): number {
 		return hsl2rgb(Math.randomRange(0, 359), 99, 50);
 	 }
