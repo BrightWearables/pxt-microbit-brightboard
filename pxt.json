@@ -1,6 +1,6 @@
 {
     "name": "brightboard",
-    "version": "0.0.55",
+    "version": "0.0.56",
     "description": "MakeCode extensions for BrightBoard",
     "license": "MIT",
     "dependencies": {
