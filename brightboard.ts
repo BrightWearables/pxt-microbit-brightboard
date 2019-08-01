@@ -19,12 +19,7 @@
  * Functions to operate the brightboard
  */
 
-
-
-//% color=#65d6e0 icon="\uf185" groups=["colors", "patterns", "actions", "animations", "others"]  
-namespace brightboard {
-	
-	enum ColorMode{
+	enum ColorOrderMode{
 		MODE_RGB = 0,
 		MODE_GRB = 1
 	}
@@ -35,6 +30,11 @@ namespace brightboard {
 		//% block="dotstar"
 		TYPE_DOTSTAR=1
 	}
+
+//% color=#65d6e0 icon="\uf185" groups=["colors", "patterns", "actions", "animations", "others"]  
+namespace brightboard {
+	
+
 	
     /**
 	 * To be used as a shadow block containing custom colors
@@ -72,7 +72,7 @@ namespace brightboard {
 			for (let i = 0; i < len; i++) {
 				brightDisplay.setPixelColor(i, this._colorList[index]);
 				index = index + 1;
-				if (index >= len) {
+				if (index >= this._colorList.length()) {
 				   index = 0;
 				}
 			}
@@ -185,7 +185,7 @@ namespace brightboard {
         start: number;
         _stride: number;  //bits per pixel
         _length: number;  //number of pixels (12)
-		_mode: ColorMode;
+		_mode: ColorOrderMode;
 		_pixelType: PixelType;
 		
 		constructor(dataPin: DigitalPin, clkPin: DigitalPin) {
@@ -196,7 +196,7 @@ namespace brightboard {
 			this._brightness = 128;
 			this.buf = pins.createBuffer(this._length * this._stride);
 			this.start = 0;
-			this._mode = ColorMode.MODE_GRB;
+			this._mode = ColorOrderMode.MODE_GRB;
 			this._pixelType = PixelType.TYPE_NEOPIXEL;
 		}
 			
@@ -218,7 +218,7 @@ namespace brightboard {
 		}
 		
 	    setBufferRGB(offset: number, red: number, green: number, blue: number): void {
-        if (this._mode === ColorMode.MODE_RGB) {
+        if (this._mode === ColorOrderMode.MODE_RGB) {
             this.buf[offset + 0] = red;
             this.buf[offset + 1] = green;
         } else {
@@ -278,10 +278,21 @@ namespace brightboard {
 	 * @param type the type of pixels used: eg:pixelType.TYPE_DOTSTAR
 	 */
 	 //% blockId=brightboard_set_pixel_type block="set pixel type %type"
-	 //% type.defl=brightboard.PixelType.TYPE_DOTSTAR
-	 //% advanced=true
+	 //% type.defl=PixelType.TYPE_DOTSTAR
+	 //% advanced=true blockHidden=true
 	 export function setPixelType(type: PixelType): void {
 		brightDisplay._pixelType=type;
+	 }
+	 
+	/**
+	 * Set the colorOrder 
+	 * @param type the type of pixels used: eg:ColorOrderMode.MODE_RGB
+	 */
+	 //% blockId=brightboard_set_pixel_type block="set pixel mode %mode"
+	 //% type.defl=ColorOrderMode.MODE_RGB
+	 //% advanced=true
+	 export function colorOrder(mode: ColorOrderMode): void {
+		brightDisplay._mode=mode;
 	 }
 		 
 	
@@ -301,11 +312,11 @@ namespace brightboard {
 	 */
 	 //% blockId=brightboard_show block="show" weight=150 group=actions
 	export function show(): void {
-		if (brightDisplay._pixelType == PixelType.TYPE_DOTSTAR) {
+//		if (brightDisplay._pixelType == PixelType.TYPE_DOTSTAR) {
 			spiSendBuffer(brightDisplay.buffer(), brightDisplay.length());
-		} else {
-			ws2812b.sendBuffer(brightDisplay.buffer(), DigitalPin.P0);
-		}
+//		} else {
+//			ws2812b.sendBuffer(brightDisplay.buffer(), DigitalPin.P0);
+//		}
 	}
 	
 	/**
