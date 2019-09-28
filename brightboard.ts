@@ -20,10 +20,13 @@
  */
 
 	enum ColorOrderMode{
+		//% block="RGB"
 		MODE_RGB = 0,
+		//% block="GRB"
 		MODE_GRB = 1
 	}
 
+	// Unused because neopixels are not compatible with MakeCode Bluetooth
 	enum PixelType{
 		//% block="neopixel"
 		TYPE_NEOPIXEL=0,
@@ -33,8 +36,6 @@
 
 //% color=#65d6e0 icon="\uf185" groups=["colors", "patterns", "actions", "animations", "others"]  
 namespace brightboard {
-	
-
 	
     /**
 	 * To be used as a shadow block containing custom colors
@@ -51,6 +52,7 @@ namespace brightboard {
         return value;
     }
 	
+		
 	// Create a class to hold variable length lists of colors. Since colors are represented 
 	// by hex numbers, it becomes challenging to create blocks to represent arrays of colors
 	// without having them show up as arrays of numbers
@@ -116,17 +118,17 @@ namespace brightboard {
     /**
      * Returns variable length list of up to 12 LED colors
      * @param ledval1 eg:0xff0000
-     * @param ledval2 eg:0xFF7F00
-     * @param ledval3 eg:0xFFFE00
-     * @param ledval4 eg:0x7FFF00
-     * @param ledval5 eg:0x00FF00
-     * @param ledval6 eg:0x00FF7F
-     * @param ledval7 eg:0x00FFFE
-     * @param ledval8 eg:0x007FFF
-     * @param ledval9 eg:0x0000FF
-     * @param ledval10 eg:0x7F00FF
-     * @param ledval11 eg:0xFE00FF
-     * @param ledval12 eg:0xFF007F
+     * @param ledval2 eg:0x000000
+     * @param ledval3 eg:0x000000
+     * @param ledval4 eg:0x000000
+     * @param ledval5 eg:0x000000
+     * @param ledval6 eg:0x000000
+     * @param ledval7 eg:0x000000
+     * @param ledval8 eg:0x000000
+     * @param ledval9 eg:0x000000
+     * @param ledval10 eg:0x000000
+     * @param ledval11 eg:0x000000
+     * @param ledval12 eg:0x000000
      */
     //% blockId="variable_color_for_led" block="$ledval1|$ledval2||$ledval3|$ledval4|$ledval5|$ledval6|$ledval7|$ledval8|$ledval9|$ledval10|$ledval11|$ledval12"
     //% ledval1.shadow="brightColorNumberPicker"
@@ -187,17 +189,18 @@ namespace brightboard {
         _length: number;  //number of pixels (12)
 		_mode: ColorOrderMode;
 		_pixelType: PixelType;
+		_animations: Array<Animation>;
 		
 		constructor(dataPin: DigitalPin, clkPin: DigitalPin) {
         	this.dataPin = dataPin;
 			this.clkPin = clkPin;
 			this._length = 12;
 			this._stride = 3;
-			this._brightness = 128;
+			this._brightness = 64;
 			this.buf = pins.createBuffer(this._length * this._stride);
 			this.start = 0;
 			this._mode = ColorOrderMode.MODE_GRB;
-			this._pixelType = PixelType.TYPE_NEOPIXEL;
+			this._pixelType = PixelType.TYPE_DOTSTAR;
 		}
 			
 
@@ -209,13 +212,7 @@ namespace brightboard {
 			return this._length;
 		}
 
-		brightness(): number {
-		   return this._brightness;
-		}
-		
-		setBrightness(bright: number): void {
-			this._brightness = bright;
-		}
+
 		
 	    setBufferRGB(offset: number, red: number, green: number, blue: number): void {
         if (this._mode === ColorOrderMode.MODE_RGB) {
@@ -234,7 +231,7 @@ namespace brightboard {
             let green = unpackG(rgb);
             let blue = unpackB(rgb);
 
-            const br = this._brightness();
+            let br = this._brightness;
             if (br < 255) {
                 red = (red * br) >> 8;
                 green = (green * br) >> 8;
@@ -267,34 +264,62 @@ namespace brightboard {
             }
             this.setBufferRGB(pixeloffset, red, green, blue)
         }		
+		
+		/**
+		 * Set the type of LED (neopixel or dotstar)  
+		 * @param type the type of pixels used: eg:pixelType.TYPE_DOTSTAR
+		 */
+		 //% blockId=brightboard_set_pixel_type block="set pixel type %type"
+		 //% type.defl=PixelType.TYPE_DOTSTAR
+		 //% advanced=true blockHidden=true
+		 setPixelType(type: PixelType): void {
+			this._pixelType=type;
+		 }
+	 
+		/**
+		 * Set the colorOrder 
+		 * @param type the type of pixels used: eg:ColorOrderMode.MODE_RGB
+		 */
+		 //% blockId=brightboard_set_color_order block="set color mode %mode"
+		 //% type.defl=ColorOrderMode.MODE_RGB
+		 //% advanced=true
+		 colorOrder(mode: ColorOrderMode): void {
+			this._mode=mode;
+		 }
+		 
+		
 
 	}
 	
-    // ----Only want one instance of brightBoardDisplay class - this is it----
+    // ----Only one instance of brightBoardDisplay class - this is it----
 	let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
 
+
+	abstract class Animation {
+		lastUpdateTime : number;
+		updateIntervalMillis: number;
+		
+		abstract doUpdate() : boolean;
+	}
+	
 	/**
-	 * Set the type of LED (neopixel or dotstar)  
-	 * @param type the type of pixels used: eg:pixelType.TYPE_DOTSTAR
-	 */
-	 //% blockId=brightboard_set_pixel_type block="set pixel type %type"
-	 //% type.defl=PixelType.TYPE_DOTSTAR
-	 //% advanced=true blockHidden=true
-	 export function setPixelType(type: PixelType): void {
-		brightDisplay._pixelType=type;
-	 }
-	 
-	/**
-	 * Set the colorOrder 
-	 * @param type the type of pixels used: eg:ColorOrderMode.MODE_RGB
-	 */
-	 //% blockId=brightboard_set_pixel_type block="set pixel mode %mode"
-	 //% type.defl=ColorOrderMode.MODE_RGB
-	 //% advanced=true
-	 export function colorOrder(mode: ColorOrderMode): void {
-		brightDisplay._mode=mode;
-	 }
-		 
+	 * Get the brightness of the pixel strip.
+	*/
+	//% blockId="brightboard_get_brightness" block="brightness"
+	//% weight=7
+	export function brightness(): number {
+	   return brightDisplay._brightness;
+	}
+
+   /**
+   * Set the brightness of the pixel strip
+   * @param bright brightness of pixels eg:64
+   */
+   //%blockId=brightboard_set_brightness block="set brightness %brightVal"
+   //%bright.max=255 bright.min=0		
+	export function setBrightness(bright: number): void {
+		brightDisplay._brightness = bright;
+	}
 	
 	/**
 	 * @param buf Buffer to send
@@ -346,28 +371,6 @@ namespace brightboard {
 		spiClear(brightDisplay.buffer(), brightDisplay.length());
 	}
 	
-
-			
-	/**
-	 * Get the brightness of the pixel strip.
-	*/
-	//% blockId="brightboard_get_brightness" block="brightness"
-	//% weight=7
-	export function brightness(): number {
-		return brightDisplay.brightness();
-	}
-	
-	
-	/**
-	 * Set the brightness of the pixel strip
-	 * @param bright brightness of pixels eg:64
-	 */
-	 //%blockId=bright_board_set_brightness block="set brightness %brightVal"
-	 //%bright.max=255 bright.min=0
-	export function setBrightness(bright: number): void {
-		brightDisplay.setBrightness(bright);
-	}
-
 	
 	/**
 	 * Set specified pixel to the specifed color (must use show to send)
@@ -534,6 +537,8 @@ namespace brightboard {
         let b = (rgb) & 0xFF;
         return b;
     }
+	
+
 }	
 
 
