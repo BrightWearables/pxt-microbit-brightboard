@@ -278,7 +278,7 @@ namespace brightboard {
 	 
 		/**
 		 * Set the colorOrder 
-		 * @param type the type of pixels used: eg:ColorOrderMode.MODE_RGB
+		 * @param mode the color order of pixels: eg:ColorOrderMode.MODE_RGB
 		 */
 		 //% blockId=brightboard_set_color_order block="set color mode %mode"
 		 //% type.defl=ColorOrderMode.MODE_RGB
