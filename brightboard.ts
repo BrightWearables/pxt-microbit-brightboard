@@ -21,9 +21,9 @@
 
 	enum ColorOrderMode{
 		//% block="RGB"
-		MODE_RGB = 0,
+		MODE_RGB=0,
 		//% block="GRB"
-		MODE_GRB = 1
+		MODE_GRB=1
 	}
 
 	// Unused because neopixels are not compatible with MakeCode Bluetooth
@@ -276,18 +276,6 @@ namespace brightboard {
 			this._pixelType=type;
 		 }
 	 
-		/**
-		 * Set the colorOrder 
-		 * @param mode the color order of pixels: eg:ColorOrderMode.MODE_RGB
-		 */
-		 //% blockId=brightboard_set_color_order block="set color mode %mode"
-		 //% type.defl=ColorOrderMode.MODE_RGB
-		 //% advanced=true
-		 colorOrder(mode: ColorOrderMode): void {
-			this._mode=mode;
-		 }
-		 
-		
 
 	}
 	
@@ -301,6 +289,18 @@ namespace brightboard {
 		
 		abstract doUpdate() : boolean;
 	}
+	
+	/**
+	 * Set the pixel color order (GRB or RGB)
+	 * @param mode the color order of pixels
+	 */
+	 //% blockId=brightboard_set_color_order block="set color mode $mode"
+	 //% mode.defl = ColorOrderMode.MODE_RGB
+	 //% advanced=true
+	 export function colorOrder(mode: ColorOrderMode): void {
+		brightDisplay._mode=mode;
+	 }
+	
 	
 	/**
 	 * Get the brightness of the pixel strip.
