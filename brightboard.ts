@@ -1,11 +1,10 @@
 /**
-* Andy England @ SparkFun Electronics
-* September 6, 2018
+* Debra Ansell @ Bright Wearables
 * https://github.com/BrightWearables/pxt-microbit-brightboard
 
 * Development environment specifics:
-* Written in Microsoft Makecode
-* Tested with a SparkFun brightboard sensor and micro:bit
+* Written in and tested with PXT
+* Tested with a brightboard sensor and micro:bit
 *
 * This code is released under the [MIT License](http://opensource.org/licenses/MIT).
 * Please review the LICENSE.md file included with this example. If you have any questions
