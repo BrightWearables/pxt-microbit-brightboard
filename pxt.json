@@ -17,5 +17,7 @@
     "testFiles": [
         "tests.ts"
     ],
-    "public": true
+    "public": true,
+    "preferredEditor": "tsprj",
+    "installedVersion": "workspace:105f36e3-5532-4ab2-614b-4bc4bd72d1df"
 }
