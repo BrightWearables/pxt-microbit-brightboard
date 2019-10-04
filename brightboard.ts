@@ -278,7 +278,10 @@ namespace brightboard {
 
 	}
 	
-    // ----Only one instance of brightBoardDisplay class - this is it----
+    /**
+     * Only on instance of brightDisplay class
+     */
+    //% fixedInstance
 	let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
 
 
