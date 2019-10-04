@@ -207,7 +207,7 @@ namespace brightboard {
             this.clkPin = clkPin;
             this._length = 12;
             this._stride = 3;
-            this._brightness = 64;
+            this._brightness = 255;
             this.buf = pins.createBuffer(this._length * this._stride);
             this.start = 0;
             this._mode = ColorOrderMode.MODE_GRB;
