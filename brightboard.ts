@@ -25,7 +25,8 @@
 		MODE_GRB=1
 	}
 
-	// Unused because neopixels are not compatible with MakeCode Bluetooth
+	// Unused because neopixels are not compatible with MakeCode Bluetooth.Keeping the option for now
+    // in case the flexibility to use neopixels without bluetooth is required
 	enum PixelType{
 		//% block="neopixel"
 		TYPE_NEOPIXEL=0,
