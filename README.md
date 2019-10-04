@@ -15,6 +15,9 @@ Project and code ideas for the Bright Board may be found at https://www.brightwe
 ## Basic usage
 Bright Board code blocks that contain the word "show" will write their pattern to the LEDs when executed. If a code block doesn't contain the word "show", then it only makes changes to the buffered LED values. To make those values visible in the LEDs, you must use a "show" block.
 
+```blocks
+    brightDisplay.show()
+```
 ## Example: Display a repeating pattern
 
 
