@@ -4,7 +4,7 @@
 
 * Development environment specifics:
 * Written in and tested with PXT
-* Tested with a brightboard sensor and micro:bit
+* Tested with a brightboard and micro:bit
 *
 * This code is released under the [MIT License](http://opensource.org/licenses/MIT).
 * Please review the LICENSE.md file included with this example. If you have any questions
@@ -34,7 +34,7 @@ enum PixelType {
     TYPE_DOTSTAR = 1
 }
 
-//% color=#65d6e0 icon="\uf185" groups=["colors", "patterns", "actions", "animations", "others"]  
+//% color=#65d6e0 icon="\uf185" groups=["colors", "patterns", "actions", "others"]  
 namespace brightboard {
 
     /**
@@ -171,8 +171,19 @@ namespace brightboard {
     }
 
 
+    /**
+     * Test function
+     * @param colList test parameter
+     */
+    //% block="test $colList" blockId=testID
+    //% colList.shadow="lists_create_with"
+    //% colList.defl="brightColorNumberPicker"
+    //% weight=200 advanced=true
+    function myFunction(colList: number[]): number[] { 
+        return colList;
+    }
 
-    // Functions for reading light from the brightboard in lux or straight adv value
+    // parameters for the Bright Board
     export class BrightBoardDisplay {
 
         buf: Buffer;   //Buffer for pixel data
@@ -189,7 +200,7 @@ namespace brightboard {
         _length: number;  //number of pixels (12)
         _mode: ColorOrderMode;
         _pixelType: PixelType;
-        _animations: Array<Animation>;
+        _doGamma: boolean;
 
         constructor(dataPin: DigitalPin, clkPin: DigitalPin) {
             this.dataPin = dataPin;
@@ -201,6 +212,7 @@ namespace brightboard {
             this.start = 0;
             this._mode = ColorOrderMode.MODE_GRB;
             this._pixelType = PixelType.TYPE_DOTSTAR;
+            this._doGamma = true;
         }
 
 
@@ -267,7 +279,7 @@ namespace brightboard {
 
 		/**
 		 * Set the type of LED (neopixel or dotstar)  
-		 * @param type the type of pixels used: eg:pixelType.TYPE_DOTSTAR
+		 * @param type the type of pixels used eg:pixelType.TYPE_DOTSTAR
 		 */
         //% blockId=brightboard_set_pixel_type block="set pixel type %type"
         //% type.defl=PixelType.TYPE_DOTSTAR
@@ -276,22 +288,25 @@ namespace brightboard {
             this._pixelType = type;
         }
 
-
     }
 
+
     /**
-     * Only on instance of brightDisplay class
+     * Only one instance of brightDisplay class
      */
     //% fixedInstance
     let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
 
-
-    abstract class Animation {
-        lastUpdateTime: number;
-        updateIntervalMillis: number;
-
-        abstract doUpdate(): boolean;
+    /**
+      * Set the gamma correction option
+     * @param applyGamma should gamma correction be applied to the LEDs 
+     */
+    //% blockId=brightboard_set_gamma_correct block="apply gamma correction $applyGamma"
+    //% advanced=true applyGamma.shadow="toggleYesNo" applyGamma.defl=true
+    export function setGammaCorrect(applyGamma: boolean): void {
+        brightDisplay._doGamma = applyGamma;
     }
+
 
 	/**
 	 * Set the pixel color order (GRB or RGB)
@@ -331,7 +346,7 @@ namespace brightboard {
 	 */
     //%blockId=brightboard_spi_dotstar_send_buffer blockHidden=true
     //%shim=brightboard::spiDotStarSendBuffer
-    export function spiSendBuffer(buf: Buffer, len: number): void {
+    export function spiSendBuffer(buf: Buffer, len: number, doGamma: boolean): void {
         return
     }
 
@@ -341,7 +356,7 @@ namespace brightboard {
     //% blockId=brightboard_show block="show" weight=150 group=actions
     export function show(): void {
         //		if (brightDisplay._pixelType == PixelType.TYPE_DOTSTAR) {
-        spiSendBuffer(brightDisplay.buffer(), brightDisplay.length());
+        spiSendBuffer(brightDisplay.buffer(), brightDisplay.length(), brightDisplay._doGamma);
         //		} else {
         //			ws2812b.sendBuffer(brightDisplay.buffer(), DigitalPin.P0);
         //		}
