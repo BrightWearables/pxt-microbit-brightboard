@@ -15,7 +15,7 @@
 
 
 /**
- * Functions to operate the brightboard
+ * Functions to operate the brightboard and control the twelve DotStar (or SK9822) LEDs it contains
  */
 
 enum ColorOrderMode {
@@ -25,8 +25,8 @@ enum ColorOrderMode {
     MODE_GRB = 1
 }
 
-// Unused because neopixels are not compatible with MakeCode Bluetooth.Keeping the option for now
-// in case the flexibility to use neopixels without bluetooth is required
+// This extension does not work for neopixels because neopixels are not compatible with MakeCode Bluetooth.
+// Keeping this enum option for now in case that changes in the future.
 enum PixelType {
     //% block="neopixel"
     TYPE_NEOPIXEL = 0,
@@ -38,9 +38,7 @@ enum PixelType {
 namespace brightboard {
 
     /**
-	 * To be used as a shadow block containing custom colors
-     * Get the color wheel field editor
-     * @param color color, eg: #ff0000
+	 * To be used as a shadow color picker block containing a custom array
      */
     //% blockId=brightColorNumberPicker block="%value"
     //% shim=TD_ID colorSecondary="#FFFFFF"
@@ -53,9 +51,8 @@ namespace brightboard {
     }
 
 
-    // Create a class to hold variable length lists of colors. Since colors are represented 
-    // by hex numbers, it becomes challenging to create blocks to represent arrays of colors
-    // without having them show up as arrays of numbers
+    // Create a class to hold variable length lists of colors. This also helps to keep color lists
+    // from being used as function arguments to code blocks that shouldn't accept them
     export class ColorPattern {
         _colorList: Array<number>;
 
@@ -82,7 +79,7 @@ namespace brightboard {
     }
 
     /**
-     * Returns list of 12 LEDs
+     * Returns list of 12 color choices for the LEDs
      * @param ledval1 eg:0xff0000
      * @param ledval2 eg:0xFF7F00
      * @param ledval3 eg:0xFFFE00
@@ -162,26 +159,14 @@ namespace brightboard {
 
     /**
      * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
-     * @param colorList list of colors that repeat to form a pattern
+     * @param colPattern list of colors that repeat to form a pattern
      */
     //% blockId=brightboard_set_pixel_array block="set pattern %colPattern"
     //% group=patterns colPattern.shadow=variable_color_for_led
-    export function setPattern(colors: ColorPattern): void {
-        colors.fillBufferWithPattern();
+    export function setPattern(colPattern: ColorPattern): void {
+        colPattern.fillBufferWithPattern();
     }
 
-
-    /**
-     * Test function
-     * @param colList test parameter
-     */
-    //% block="test $colList" blockId=testID
-    //% colList.shadow="lists_create_with"
-    //% colList.defl="brightColorNumberPicker"
-    //% weight=200 advanced=true
-    function myFunction(colList: number[]): number[] { 
-        return colList;
-    }
 
     // parameters for the Bright Board
     export class BrightBoardDisplay {
@@ -190,12 +175,7 @@ namespace brightboard {
         dataPin: DigitalPin;
         clkPin: DigitalPin;
         _brightness: number;
-        // per pixel scaling. This buffer is allocated on-demand when per-pixel brightness is needed.
-        // when rendering, if this buffer is null, use _brightness instead
-        _brightnessBuf: Buffer;
-        _sendBuf: Buffer; // scaled color buffer
-        currentHue: number;
-        start: number;
+        _start: number;
         _stride: number;  //bits per pixel
         _length: number;  //number of pixels (12)
         _mode: ColorOrderMode;
@@ -209,7 +189,7 @@ namespace brightboard {
             this._stride = 3;
             this._brightness = 255;
             this.buf = pins.createBuffer(this._length * this._stride);
-            this.start = 0;
+            this._start = 0;
             this._mode = ColorOrderMode.MODE_GRB;
             this._pixelType = PixelType.TYPE_DOTSTAR;
             this._doGamma = true;
@@ -224,8 +204,6 @@ namespace brightboard {
             return this._length;
         }
 
-
-
         setBufferRGB(offset: number, red: number, green: number, blue: number): void {
             if (this._mode === ColorOrderMode.MODE_RGB) {
                 this.buf[offset + 0] = red;
@@ -237,6 +215,25 @@ namespace brightboard {
             this.buf[offset + 2] = blue;
         }
 
+        getBufferColor(pixelOffset: number): number {
+            pixelOffset = (pixelOffset + this._start) * this._stride;
+
+            if (this._mode === ColorOrderMode.MODE_RGB) {
+                return packRGB(this.buf[pixelOffset], this.buf[pixelOffset + 1], this.buf[pixelOffset + 2]);
+            } else {
+                return packRGB(this.buf[pixelOffset + 1], this.buf[pixelOffset], this.buf[pixelOffset + 2]);
+            }
+        }
+
+        getBufferRGB(pixelOffset: number): number[] {
+            pixelOffset = (pixelOffset + this._start) * this._stride;
+
+            if (this._mode === ColorOrderMode.MODE_RGB) {
+                return [this.buf[pixelOffset], this.buf[pixelOffset + 1], this.buf[pixelOffset + 2]];
+            } else {
+                return [this.buf[pixelOffset + 1], this.buf[pixelOffset], this.buf[pixelOffset + 2]];
+            }
+        }
 
         setAllRGB(rgb: number) {
             let red = unpackR(rgb);
@@ -256,13 +253,12 @@ namespace brightboard {
         }
 
 
-        setPixelColor(pixeloffset: number, rgb: number): void {
-            if (pixeloffset < 0
-                || pixeloffset >= this._length)
+        setPixelColor(pixelOffset: number, rgb: number): void {
+            if (pixelOffset < 0
+                || pixelOffset >= this._length)
                 return;
 
-            let stride = this._stride;
-            pixeloffset = (pixeloffset + this.start) * stride;
+            pixelOffset = (pixelOffset + this._start) * this._stride;
 
             let red = unpackR(rgb);
             let green = unpackG(rgb);
@@ -274,8 +270,9 @@ namespace brightboard {
                 green = (green * br) >> 8;
                 blue = (blue * br) >> 8;
             }
-            this.setBufferRGB(pixeloffset, red, green, blue)
+            this.setBufferRGB(pixelOffset, red, green, blue)
         }
+
 
 		/**
 		 * Set the type of LED (neopixel or dotstar)  
@@ -298,8 +295,8 @@ namespace brightboard {
     let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
 
     /**
-      * Set the gamma correction option
-     * @param applyGamma should gamma correction be applied to the LEDs 
+     * Set the gamma correction option
+     * @param applyGamma 
      */
     //% blockId=brightboard_set_gamma_correct block="apply gamma correction $applyGamma"
     //% advanced=true applyGamma.shadow="toggleYesNo" applyGamma.defl=true
@@ -307,6 +304,18 @@ namespace brightboard {
         brightDisplay._doGamma = applyGamma;
     }
 
+    /**
+      * Get the color value for a given pixel
+      * @param pixelOffset index of pixel
+      */
+    //% blockId=brightboard_pixel_value block="color at pixel %pixelOffset"
+    //% pixelOffset.defl=0 pixelOffset.max=11 pixelOffset.min=0
+    //% group=colors
+    export function getPixelValue(pixelOffset: number): number {
+        if (pixelOffset < 0 || pixelOffset >= brightDisplay.length())
+            return packRGB(0, 0, 0);
+        return brightDisplay.getBufferColor(pixelOffset);
+    }
 
 	/**
 	 * Set the pixel color order (GRB or RGB)
@@ -396,12 +405,50 @@ namespace brightboard {
         }
     }
 
+    /**
+     * Fade the color by the brightness
+     * @param color color to fade
+     * @param brightness the amount of brightness to apply to the color, eg: 128
+     */
+    //% blockId=brightboard_fade_colors block="fade %color|by %brightness"
+    //% brightness.min=0 brightness.max=255
+    //% color.shadow="brightColorNumberPicker"
+    //% group=actions weight=18 blockGap=8
+    //% blockHidden=true
+    export function fade(color: number, brightness: number): number {
+        brightness = Math.max(0, Math.min(255, brightness >> 0));
+        if (brightness < 255) {
+            let red = unpackR(color);
+            let green = unpackG(color);
+            let blue = unpackB(color);
 
-	/**
-	 * Fades from the pattern currently in the buffer to the specified pattern
-	 */
-    //export function fadeToPattern(pattern: ColorPattern): void {
-    //}
+            red = (red * brightness) >> 8;
+            green = (green * brightness) >> 8;
+            blue = (blue * brightness) >> 8;
+
+            color = packRGB(red, green, blue);
+        }
+        return color;
+    }
+
+    /**
+     * Fades all pixels by the specified brightness factor (0-255)
+     * @param brightness the amount of brightness to apply to the color
+     */
+    //% blockId=brightboard_fade_all block="fade pixels by %brightness"
+    //% brightness.min=0 brightness.max=255 brightness.defl=128
+    //% group=actions
+    export function fadeAll(brightness: number): void {
+        if (brightness < 255) {
+            let stride = brightDisplay._stride;
+            for (let i = 0; i < brightDisplay.length(); i++) {
+                let rgb = brightDisplay.getBufferRGB(i);
+                brightDisplay.setBufferRGB(i * stride, (rgb[0] * brightness) >> 8, (rgb[1] * brightness) >> 8, (rgb[2] * brightness) >> 8);
+            }
+        }
+    }
+
+
 
 	/**
 	 * clear the pixel strip
@@ -421,7 +468,9 @@ namespace brightboard {
 	 */
     //% blockId=brightboard_clear block="clear" weight=140 group=actions
     export function doClear(): void {
-        spiClear(brightDisplay.buffer(), brightDisplay.length());
+        brightDisplay.setAllRGB(packRGB(0, 0, 0))
+        //spiClear(brightDisplay.buffer(), brightDisplay.length());
+
     }
 
 
@@ -446,7 +495,7 @@ namespace brightboard {
     //% offset.min=-12 offset.max=12 group=actions
     export function rotate(offset: number): void {
         let stride = brightDisplay._stride;
-        let start = brightDisplay.start;
+        let start = brightDisplay._start;
         let len = brightDisplay._length;
         brightDisplay.buffer().rotate(-offset * stride, start * stride, len * stride);
     }
@@ -460,7 +509,7 @@ namespace brightboard {
     //% offset.min=-12 offset.max=12 group=actions
     export function shift(offset: number): void {
         let stride = brightDisplay._stride;
-        let start = brightDisplay.start;
+        let start = brightDisplay._start;
         let len = brightDisplay._length;
         brightDisplay.buffer().shift(-offset * stride, start * stride, len * stride);
     }
