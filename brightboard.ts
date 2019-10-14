@@ -34,7 +34,7 @@ enum PixelType {
     TYPE_DOTSTAR = 1
 }
 
-//% color=#65d6e0 icon="\uf185" groups=["colors", "patterns", "actions", "others"]  
+//% color=#3CCBB1 icon="\uf185" groups=["colors", "patterns", "actions", "others"]
 namespace brightboard {
 
     /**
