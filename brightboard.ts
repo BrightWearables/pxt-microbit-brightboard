@@ -400,11 +400,48 @@ namespace brightboard {
         return packRGB(r, g, b);
     }
 
-    /**
-     *  Transitions from one color display to another by fading
-     */
-    export function fadeToColors(newPattern: number[]): void { }
 
+    /**
+     *  Transitions from the current color display to another by fading
+     */
+    export function fadeToColors(newPattern: number[]): void { 
+        // Make sure the new pattern has a full complement of pixels...
+        let fullPattern = newPattern.slice(0);
+        let ledsToFill = brightDisplay.length() - fullPattern.length;
+        if (ledsToFill) {
+            let index = 0
+            for (let i = 0; i < ledsToFill; i++) {
+                fullPattern.push(newPattern[index]);
+                index = index + 1;
+                if (index >= newPattern.length) {
+                    index = 0
+                }
+            }
+        }
+        let finalColorBuf = rgbListToColorBuffer(fullPattern);
+        let len = brightDisplay.buf.length;
+        let initialColorBuf = pins.createBuffer(len);
+        initialColorBuf.write(0,brightDisplay.buf);
+        let nsteps = 30;
+        for (let i = 0; i < nsteps; i++) {
+            const alpha = Math.idiv(0xff * i, nsteps);
+            const malpha = 0xff - alpha;
+            for (let j = 0; j < len; j++) {
+                brightDisplay.buf[j] = (initialColorBuf[i]*malpha + finalColorBuf[i]*alpha) >> 8;
+            }
+            show();
+        }
+    }
+
+    /**
+     * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
+     * @param colPattern list of colors that repeat to form a pattern
+     */
+    //% blockId=brightboard_fade_to_pattern block="fade to pattern %colPattern"
+    //% group=patterns colPattern.shadow=variable_color_for_led
+    export function fadeToPattern(colPattern: ColorPattern): void {
+        fadeToColors(colPattern.getColors());
+    }
 
     /**
      * Creates a gradient between the specified pixels
