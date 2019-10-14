@@ -405,7 +405,7 @@ namespace brightboard {
      *  Transitions from the current color display to another by fading
      * TBD - didn't incorporate brightnes!!!!
      */
-    export function fadeToColors(newPattern: number[]): void { 
+    export function fadeToColors(newPattern: number[], speed: number): void { 
         // Make sure the new pattern has a full complement of pixels...
         let fullPattern = newPattern.slice(0);
         let ledsToFill = brightDisplay.length() - newPattern.length;
@@ -440,17 +440,20 @@ namespace brightboard {
                 brightDisplay.buf[j] = (initialColorBuf[j]*malpha + finalColorBuf[j]*alpha) >> 8;
             }
             show();
+            basic.pause(speed*10);
         }
     }
 
     /**
      * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
      * @param colPattern list of colors that repeat to form a pattern
+     * @param speed how quikly to make the transition
      */
-    //% blockId=brightboard_fade_to_pattern block="fade to pattern %colPattern"
+    //% blockId=brightboard_fade_to_pattern block="fade to pattern %colPattern| speed %speed"
+    //% speed.max=10 speed.min=1 speed.defl=5
     //% group=patterns colPattern.shadow=variable_color_for_led
-    export function fadeToPattern(colPattern: ColorPattern): void {
-        fadeToColors(colPattern.getColors());
+    export function fadeToPattern(colPattern: ColorPattern, speed: number): void {
+        fadeToColors(colPattern.getColors(), 10-speed);
     }
 
     /**
