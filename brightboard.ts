@@ -50,6 +50,20 @@ namespace brightboard {
         return value;
     }
 
+    // Returns color buffer containing same number of colors as rgbList
+    function rgbListToColorBuffer(rgbList: number[], stride: number = 3): Buffer {
+        let len = rgbList.length
+        let buf = pins.createBuffer(len * stride);
+        let offset = 0
+        for (let i = 0; i < len; i++) {
+            let rgb = rgbList[i];
+            buf[offset] = (rgb >> 16) & 0XFF;
+            buf[offset + 1] = (rgb >> 8) & 0xFF;
+            buf[offset + 2] = rgb & 0xFF;
+            offset = offset + stride;
+        }
+        return buf;
+    }
 
     // Create a class to hold variable length lists of colors. This also helps to keep color lists
     // from being used as function arguments to code blocks that shouldn't accept them
@@ -65,11 +79,14 @@ namespace brightboard {
         }
 
         // fills a Buffer with the pattern
-        fillBufferWithPattern(): void {
-            let len = brightDisplay.length();
+        fillBufferWithPattern(buf: Buffer, stride: number = 3): void {
+            let len = buf.length() / stride;
             let index = 0;
             for (let i = 0; i < len; i++) {
-                brightDisplay.setPixelColor(i, this._colorList[index]);
+                let rgb = this._colorList[index];
+                buf[i * stride] = (rgb >> 16) & 0XFF;
+                buf[i * stride + 1] = (rgb >> 8) & 0XFF;
+                buf[i * stride + 2] = rgb & 0XFF;
                 index = index + 1;
                 if (index >= this._colorList.length()) {
                     index = 0;
@@ -164,7 +181,7 @@ namespace brightboard {
     //% blockId=brightboard_set_pixel_array block="set pattern %colPattern"
     //% group=patterns colPattern.shadow=variable_color_for_led
     export function setPattern(colPattern: ColorPattern): void {
-        colPattern.fillBufferWithPattern();
+        colPattern.fillBufferWithPattern(brightDisplay.buf);
     }
 
 
@@ -275,7 +292,7 @@ namespace brightboard {
 
 
 		/**
-		 * Set the type of LED (neopixel or dotstar)  
+		 * Set the type of LED (neopixel or dotstar)  - currently only dotstar
 		 * @param type the type of pixels used eg:pixelType.TYPE_DOTSTAR
 		 */
         //% blockId=brightboard_set_pixel_type block="set pixel type %type"
@@ -382,6 +399,11 @@ namespace brightboard {
         const b = (unpackB(color) * malpha + unpackB(otherColor) * alpha) >> 8;
         return packRGB(r, g, b);
     }
+
+    /**
+     *  Transitions from one color display to another by fading
+     */
+    export function fadeToColors(newPattern: number[]): void { }
 
 
     /**
@@ -642,5 +664,3 @@ namespace brightboard {
 
 
 }
-
-
