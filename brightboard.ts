@@ -403,6 +403,7 @@ namespace brightboard {
 
     /**
      *  Transitions from the current color display to another by fading
+     * TBD - didn't incorporate brightnes!!!!
      */
     export function fadeToColors(newPattern: number[]): void { 
         // Make sure the new pattern has a full complement of pixels...
