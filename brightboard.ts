@@ -408,7 +408,7 @@ namespace brightboard {
     export function fadeToColors(newPattern: number[]): void { 
         // Make sure the new pattern has a full complement of pixels...
         let fullPattern = newPattern.slice(0);
-        let ledsToFill = brightDisplay.length() - fullPattern.length;
+        let ledsToFill = brightDisplay.length() - newPattern.length;
         if (ledsToFill) {
             let index = 0
             for (let i = 0; i < ledsToFill; i++) {
@@ -419,16 +419,25 @@ namespace brightboard {
                 }
             }
         }
+
         let finalColorBuf = rgbListToColorBuffer(fullPattern);
+        // Adjust for brightness if necessary
+        let br = brightDisplay._brightness;
+        if (br < 255) {
+            for (let i = 0; i < finalColorBuf.length; i++) {
+                finalColorBuf[i] = (finalColorBuf[i]*br) >> 8;
+            }
+        }
+
         let len = brightDisplay.buf.length;
         let initialColorBuf = pins.createBuffer(len);
         initialColorBuf.write(0,brightDisplay.buf);
         let nsteps = 30;
         for (let i = 0; i < nsteps; i++) {
-            const alpha = Math.idiv(0xff * i, nsteps);
-            const malpha = 0xff - alpha;
+            let alpha = Math.idiv(0xff * i, nsteps);
+            let malpha = 0xff - alpha;
             for (let j = 0; j < len; j++) {
-                brightDisplay.buf[j] = (initialColorBuf[i]*malpha + finalColorBuf[i]*alpha) >> 8;
+                brightDisplay.buf[j] = (initialColorBuf[j]*malpha + finalColorBuf[j]*alpha) >> 8;
             }
             show();
         }
