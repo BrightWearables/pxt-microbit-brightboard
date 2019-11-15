@@ -405,7 +405,7 @@ namespace brightboard {
      *  Transitions from the current color display to another by fading
      * TBD - didn't incorporate brightnes!!!!
      */
-    export function fadeToColors(newPattern: number[], speed: number): void { 
+    export function fadeToColors(newPattern: number[], speed: number): void {
         // Make sure the new pattern has a full complement of pixels...
         let fullPattern = newPattern.slice(0);
         let ledsToFill = brightDisplay.length() - newPattern.length;
@@ -425,22 +425,22 @@ namespace brightboard {
         let br = brightDisplay._brightness;
         if (br < 255) {
             for (let i = 0; i < finalColorBuf.length; i++) {
-                finalColorBuf[i] = (finalColorBuf[i]*br) >> 8;
+                finalColorBuf[i] = (finalColorBuf[i] * br) >> 8;
             }
         }
 
         let len = brightDisplay.buf.length;
         let initialColorBuf = pins.createBuffer(len);
-        initialColorBuf.write(0,brightDisplay.buf);
+        initialColorBuf.write(0, brightDisplay.buf);
         let nsteps = 30;
         for (let i = 0; i < nsteps; i++) {
             let alpha = Math.idiv(0xff * i, nsteps);
             let malpha = 0xff - alpha;
             for (let j = 0; j < len; j++) {
-                brightDisplay.buf[j] = (initialColorBuf[j]*malpha + finalColorBuf[j]*alpha) >> 8;
+                brightDisplay.buf[j] = (initialColorBuf[j] * malpha + finalColorBuf[j] * alpha) >> 8;
             }
             show();
-            basic.pause(speed*10);
+            basic.pause(speed * 10);
         }
     }
 
@@ -453,7 +453,7 @@ namespace brightboard {
     //% speed.max=10 speed.min=1 speed.defl=5
     //% group=patterns colPattern.shadow=variable_color_for_led
     export function fadeToPattern(colPattern: ColorPattern, speed: number): void {
-        fadeToColors(colPattern.getColors(), 10-speed);
+        fadeToColors(colPattern.getColors(), 10 - speed);
     }
 
     /**
@@ -548,7 +548,7 @@ namespace brightboard {
 
 	/**
 	 * Set specified pixel to the specifed color (must use show to send)
-	 * @param led index of pixel to change eg:1
+	 * @param led index of pixel to change eg:0
 	 * @param rgb color to set pixel to eg:0xff0000
 	 */
     //% blockId=brightboard_set_pixel_color block="set pixel %led| to %rgb"
