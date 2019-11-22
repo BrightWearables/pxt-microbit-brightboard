@@ -38,7 +38,7 @@ enum PixelType {
 namespace brightboard {
 
     /**
-	 * To be used as a shadow color picker block containing a custom array
+	 * Custom color picker
      */
     //% blockId=brightColorNumberPicker block="%value"
     //% shim=TD_ID colorSecondary="#FFFFFF"
@@ -332,16 +332,35 @@ namespace brightboard {
     }
 
     /**
+     * Returns the color at full brightness, assuming it was dimmed by brightVal
+     */
+    export function restoreFullBrightness(rgb: number, brightVal: number): number {
+        if (brightVal < 255) {
+            const r = Math.constrain((unpackR(rgb) << 8) / brightVal, 0, 255);
+            const g = Math.constrain((unpackG(rgb) << 8) / brightVal, 0, 255);
+            const b = Math.constrain((unpackB(rgb) << 8) / brightVal, 0, 255);
+            rgb = packRGB(r,g,b);
+        }
+        return rgb;
+    }
+
+    /**
       * Get the color value of a given pixel
       * @param pixelOffset index of pixel
       */
     //% blockId=brightboard_pixel_value block="color at pixel %pixelOffset"
     //% pixelOffset.defl=0 pixelOffset.max=11 pixelOffset.min=0
-    //% group=colors
-    export function getPixelValue(pixelOffset: number): number {
-        if (pixelOffset < 0 || pixelOffset >= brightDisplay.length())
+    //% group=colors 
+    export function getPixelValue(pixelOffset: number, restoreBrightness: boolean=true): number {
+        if (pixelOffset < 0 || pixelOffset >= brightDisplay.length()) {
             return packRGB(0, 0, 0);
-        return brightDisplay.getBufferColor(pixelOffset);
+        } else {
+            let pixColor = brightDisplay.getBufferColor(pixelOffset);
+            if (restoreBrightness) {
+                pixColor = restoreFullBrightness(pixColor, brightDisplay._brightness);
+            }
+            return pixColor;
+        }
     }
 
 	/**
