@@ -15,7 +15,7 @@
 
 
 /**
- * Functions to operate the brightboard and control the twelve DotStar (or SK9822) LEDs it contains
+ * Functions to operate the brightboard and control the twelve APA102 (or SK9822) LEDs it contains
  */
 
 enum ColorOrderMode {
@@ -50,7 +50,9 @@ namespace brightboard {
         return value;
     }
 
-    // Returns color buffer containing same number of colors as rgbList
+    /**
+     * Returns color buffer containing same number of colors as rgbList
+     */
     function rgbListToColorBuffer(rgbList: number[], stride: number = 3): Buffer {
         let len = rgbList.length
         let buf = pins.createBuffer(len * stride);
@@ -65,8 +67,10 @@ namespace brightboard {
         return buf;
     }
 
-    // Create a class to hold variable length lists of colors. This also helps to keep color lists
-    // from being used as function arguments to code blocks that shouldn't accept them
+    /**
+     * Create a class to hold variable length lists of colors. This also helps to keep color lists
+     * from being used as function arguments to code blocks that shouldn't accept them
+     */
     export class ColorPattern {
         _colorList: Array<number>;
 
@@ -78,7 +82,7 @@ namespace brightboard {
             return this._colorList;
         }
 
-        // fills a Buffer with the pattern
+        // fills a Buffer with the specified pattern
         fillBufferWithPattern(buf: Buffer, stride: number = 3): void {
             let len = buf.length() / stride;
             let index = 0;
@@ -175,7 +179,7 @@ namespace brightboard {
     }
 
     /**
-     * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
+     * Set colors for multiple pixels from a pattern. If there are fewer colors than pixels,  the pattern will repeat.
      * @param colPattern list of colors that repeat to form a pattern
      */
     //% blockId=brightboard_set_pixel_array block="set pattern %colPattern"
@@ -252,6 +256,9 @@ namespace brightboard {
             }
         }
 
+        /**
+         * Change the color of all pixels in the buffer
+         */
         setAllRGB(rgb: number) {
             let red = unpackR(rgb);
             let green = unpackG(rgb);
@@ -269,7 +276,9 @@ namespace brightboard {
             }
         }
 
-
+        /**
+         * Change the color of a pixel inside the buffer
+         */
         setPixelColor(pixelOffset: number, rgb: number): void {
             if (pixelOffset < 0
                 || pixelOffset >= this._length)
@@ -292,7 +301,8 @@ namespace brightboard {
 
 
 		/**
-		 * Set the type of LED (neopixel or dotstar)  - currently only dotstar
+		 * Set the type of LED (neopixel or dotstar)  - currently only dotstar is available
+         * so this block is hidden and will not work with the Bright Board
 		 * @param type the type of pixels used eg:pixelType.TYPE_DOTSTAR
 		 */
         //% blockId=brightboard_set_pixel_type block="set pixel type %type"
@@ -312,7 +322,7 @@ namespace brightboard {
     let brightDisplay = new BrightBoardDisplay(DigitalPin.P15, DigitalPin.P13);
 
     /**
-     * Set the gamma correction option
+     * With Gamma correction on, color computations are a bit slower, but look more accurate to the eye.
      * @param applyGamma 
      */
     //% blockId=brightboard_set_gamma_correct block="apply gamma correction $applyGamma"
