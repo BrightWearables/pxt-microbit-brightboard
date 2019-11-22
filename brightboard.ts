@@ -1,7 +1,7 @@
 /**
 * Debra Ansell @ Bright Wearables
 * https://github.com/BrightWearables/pxt-microbit-brightboard
-
+*
 * Development environment specifics:
 * Written in and tested with PXT
 * Tested with a brightboard and micro:bit
@@ -18,6 +18,7 @@
  * Functions to operate the brightboard and control the twelve APA102 (or SK9822) LEDs it contains
  */
 
+// LEDs on the current run of Bright Boards are RGB, but this gives flexibility to use GRB pixels
 enum ColorOrderMode {
     //% block="RGB"
     MODE_RGB = 0,
@@ -44,7 +45,7 @@ namespace brightboard {
     //% shim=TD_ID colorSecondary="#FFFFFF"
     //% value.fieldEditor="colornumber" value.fieldOptions.decompileLiterals=true
     //% value.defl='#ff0000' group=colors weight=150
-    //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#42b87f","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#f1d07e","#a8b5f5","#C3C6D8","#727474", "#f3f2da", "#000000"]'
+    //% value.fieldOptions.colours='["#ffffff","#ff0000","#ffaa00","#ffdc00","#ffff00","#eaff00","#8eff00","#4df243","#42b87f","#00ffdc","#00dcff","#00a3ff","#0087ff","#acb3f3","#e0acfe","#a300ff","#ea00ff","#ff00e3","#fdd3f8","#f1d07e","#a8b5f5","#C3C6D8", "#f3f2da","#727474", "#000000"]'
     //% value.fieldOptions.columns=5 value.fieldOptions.className='rgbColorPicker' 
     export function __colorNumberPicker(value: number) {
         return value;
@@ -211,7 +212,7 @@ namespace brightboard {
             this._brightness = 255;
             this.buf = pins.createBuffer(this._length * this._stride);
             this._start = 0;
-            this._mode = ColorOrderMode.MODE_GRB;
+            this._mode = ColorOrderMode.MODE_RGB;
             this._pixelType = PixelType.TYPE_DOTSTAR;
             this._doGamma = true;
         }
@@ -246,6 +247,10 @@ namespace brightboard {
             }
         }
 
+        /**
+         * Get the color of a pixel from the buffer. Note that this pixel color has probably 
+         * been corrected for brightness.
+         */
         getBufferRGB(pixelOffset: number): number[] {
             pixelOffset = (pixelOffset + this._start) * this._stride;
 
@@ -277,7 +282,7 @@ namespace brightboard {
         }
 
         /**
-         * Change the color of a pixel inside the buffer
+         * Change the color of a pixel inside the buffer, adjusting for brightness
          */
         setPixelColor(pixelOffset: number, rgb: number): void {
             if (pixelOffset < 0
@@ -332,7 +337,7 @@ namespace brightboard {
     }
 
     /**
-     * Returns the color at full brightness, assuming it was dimmed by brightVal
+     * Returns the color at full brightness, if it was previously dimmed by brightVal
      */
     export function restoreFullBrightness(rgb: number, brightVal: number): number {
         if (brightVal < 255) {
@@ -431,7 +436,6 @@ namespace brightboard {
 
     /**
      *  Transitions from the current color display to another by fading
-     * TBD - didn't incorporate brightnes!!!!
      */
     export function fadeToColors(newPattern: number[], speed: number): void {
         // Make sure the new pattern has a full complement of pixels...
@@ -460,6 +464,7 @@ namespace brightboard {
         let len = brightDisplay.buf.length;
         let initialColorBuf = pins.createBuffer(len);
         initialColorBuf.write(0, brightDisplay.buf);
+
         let nsteps = 30;
         for (let i = 0; i < nsteps; i++) {
             let alpha = Math.idiv(0xff * i, nsteps);
@@ -537,7 +542,7 @@ namespace brightboard {
      */
     //% blockId=brightboard_fade_all block="fade pixels by %brightness"
     //% brightness.min=0 brightness.max=255 brightness.defl=128
-    //% group=actions
+    //% group=actions weight=10
     export function fadeAll(brightness: number): void {
         if (brightness < 255) {
             let stride = brightDisplay._stride;
@@ -616,8 +621,8 @@ namespace brightboard {
      * Must use the "show" block to see the change.
 	 * @param rgb color for pixels eg:0xff0000
 	 */
-    //% blockId=set_board_color block="set all pixels %rgb"
-    //% rgb.shadow="brightColorNumberPicker" group=actions
+    //% blockId=set_board_color block="set all pixels to %rgb"
+    //% rgb.shadow="brightColorNumberPicker" group=actions weight=100
     export function setBoardColor(rgb: number): void {
         brightDisplay.setAllRGB(rgb);
     }
