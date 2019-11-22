@@ -332,7 +332,7 @@ namespace brightboard {
     }
 
     /**
-      * Get the color value for a given pixel
+      * Get the color value of a given pixel
       * @param pixelOffset index of pixel
       */
     //% blockId=brightboard_pixel_value block="color at pixel %pixelOffset"
@@ -357,10 +357,9 @@ namespace brightboard {
 
 
 	/**
-	 * Get the brightness of the pixel strip.
+	* Get the brightness of the pixel strip.
 	*/
     //% blockId="brightboard_get_brightness" block="brightness"
-    //% weight=7
     export function brightness(): number {
         return brightDisplay._brightness;
     }
@@ -387,7 +386,7 @@ namespace brightboard {
     }
 
 	/**
-	 * Sends the color buffer to the pixels
+	 * Makes any color changes visible on the BrightBoard LEDs
 	 */
     //% blockId=brightboard_show block="show" weight=150 group=actions
     export function show(): void {
@@ -455,9 +454,9 @@ namespace brightboard {
     }
 
     /**
-     * Set colors of multiple pixels - if fewer colors than pixels, pattern will repeat
-     * @param colPattern list of colors that repeat to form a pattern
-     * @param speed how quikly to make the transition
+     * Fades the Bright Board LEDs from the current display to the  specified pattern.
+     * @param colPattern list of colors which repeat to make a pattern
+     * @param speed how quickly to transition to the new pattern
      */
     //% blockId=brightboard_fade_to_pattern block="fade to pattern %colPattern| speed %speed"
     //% speed.max=10 speed.min=1 speed.defl=5
@@ -467,7 +466,7 @@ namespace brightboard {
     }
 
     /**
-     * Creates a gradient between the specified pixels
+     * Creates a color gradient between the specified pixels
      * @param startPixel First LED of gradient pattern eg:0
      * @param nPixels Total number of LEDs to include in pattern eg:12
      * @param startColor Initial gradient color eg:0xff0000
@@ -488,7 +487,7 @@ namespace brightboard {
     }
 
     /**
-     * Fade the color by the brightness
+     * Fade the color by the specified brightness
      * @param color color to fade
      * @param brightness the amount of brightness to apply to the color, eg: 128
      */
@@ -514,7 +513,7 @@ namespace brightboard {
     }
 
     /**
-     * Fades all pixels by the specified brightness factor (0-255)
+     * Fades the color of all pixels by the specified brightness factor (0-255). Requires a "show" block to view the effect.
      * @param brightness the amount of brightness to apply to the color
      */
     //% blockId=brightboard_fade_all block="fade pixels by %brightness"
@@ -530,8 +529,6 @@ namespace brightboard {
         }
     }
 
-
-
 	/**
 	 * clear the pixel strip
 	 * @param buf Buffer to send
@@ -546,18 +543,16 @@ namespace brightboard {
     }
 
 	/**
-	 * Clears the pixel strip - must call show to see effect
+	 * Turns all pixels off. Must use the "show" block to see the effect
 	 */
     //% blockId=brightboard_clear block="clear" weight=140 group=actions
     export function doClear(): void {
         brightDisplay.setAllRGB(packRGB(0, 0, 0))
         //spiClear(brightDisplay.buffer(), brightDisplay.length());
-
     }
 
-
 	/**
-	 * Set specified pixel to the specifed color (must use show to send)
+	 * Set specified pixel to the specifed color. Must use the "show" block to view the change.
 	 * @param led index of pixel to change eg:0
 	 * @param rgb color to set pixel to eg:0xff0000
 	 */
@@ -567,10 +562,10 @@ namespace brightboard {
         brightDisplay.setPixelColor(led, rgb);
     }
 
-
     /**
      * Rotates the current pattern by the specified offset.
-     * You need to call show to make the changes visible.
+     * Colors wrap around the ring. Must use the "show" block 
+     * to make the changes visible.
      * @param offset rotation steps eg:1
      */
     //% blockId=brightboard_rotate block="rotate pixels by $offset"
@@ -583,8 +578,9 @@ namespace brightboard {
     }
 
     /**
-     * Rotates the current pattern by the specified offset.
-     * You need to call show to make the changes visible.
+     * Shifts the current pattern by the specified offset.
+     * Colors do not wrap around. Must use the "show" block to
+     * make the changes visible.
      * @param offset shift steps eg:1
      */
     //% blockId=brightboard_shift block="shift pixels by $offset"
@@ -596,9 +592,9 @@ namespace brightboard {
         brightDisplay.buffer().shift(-offset * stride, start * stride, len * stride);
     }
 
-
 	/**
-	 * sets all pixels on BrightBoard to the same color - must select show to execute
+	 * Sets all pixels on BrightBoard to the same color.
+     * Must use the "show" block to see the change.
 	 * @param rgb color for pixels eg:0xff0000
 	 */
     //% blockId=set_board_color block="set all pixels %rgb"
@@ -606,7 +602,6 @@ namespace brightboard {
     export function setBoardColor(rgb: number): void {
         brightDisplay.setAllRGB(rgb);
     }
-
 
 	/**
 	 * initialize the SPI mode
@@ -620,7 +615,7 @@ namespace brightboard {
     }
 
 	/**
-	 * Create RGB color
+	 * Create composite color from RGB values
 	 * @param R red value eg:0
 	 * @param G green value eg:0
 	 * @param B blue value eg:0
@@ -631,7 +626,6 @@ namespace brightboard {
     export function rgbColor(R: number, G: number, B: number): number {
         return packRGB(R, G, B);
     }
-
 
 	/**
      * Converts a hue saturation luminosity value into a RGB color
@@ -693,9 +687,6 @@ namespace brightboard {
         return packRGB(r, g, b);
     }
 
-
-
-
     /**
 	 * Generate a random color
 	 */
@@ -704,7 +695,6 @@ namespace brightboard {
     export function randomColor(): number {
         return hsl2rgb(Math.randomRange(0, 359), 99, 50);
     }
-
 
     function packRGB(a: number, b: number, c: number): number {
         return ((a & 0xFF) << 16) | ((b & 0xFF) << 8) | (c & 0xFF);
@@ -721,6 +711,4 @@ namespace brightboard {
         let b = (rgb) & 0xFF;
         return b;
     }
-
-
 }
