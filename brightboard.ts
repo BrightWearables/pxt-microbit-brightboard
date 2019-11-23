@@ -12,8 +12,6 @@
 * Distributed as-is; no warranty is given.
 */
 
-
-
 /**
  * Functions to operate the brightboard and control the twelve APA102 (or SK9822) LEDs it contains
  */
@@ -393,7 +391,7 @@ namespace brightboard {
     * @param bright brightness of pixels eg:64
     */
     //%blockId=brightboard_set_brightness block="set brightness %brightVal"
-    //%bright.max=255 bright.min=0		
+    //%bright.max=255 bright.min=0 group=actions weight=5		
     export function setBrightness(bright: number): void {
         brightDisplay._brightness = bright;
     }
