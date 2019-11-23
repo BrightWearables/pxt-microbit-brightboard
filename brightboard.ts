@@ -4,7 +4,8 @@
 *
 * Development environment specifics:
 * Written in and tested with PXT
-* Tested with a brightboard and micro:bit
+* Tested with a Bright Board and micro:bit
+* More information on the Bright Board available at https://www.brightwearables.com
 *
 * This code is released under the [MIT License](http://opensource.org/licenses/MIT).
 * Please review the LICENSE.md file included with this example. If you have any questions
@@ -24,7 +25,8 @@ enum ColorOrderMode {
     MODE_GRB = 1
 }
 
-// This extension does not work for neopixels because neopixels are not compatible with MakeCode Bluetooth.
+// This extension does not work for neopixels currently. This is deliberate as
+// neopixels are not compatible with MakeCode Bluetooth.
 // Keeping this enum option for now in case that changes in the future.
 enum PixelType {
     //% block="neopixel"
@@ -77,7 +79,7 @@ namespace brightboard {
             this._colorList = val.slice(0);
         }
 
-        getColors(): Array<number> {
+        colors(): Array<number> {
             return this._colorList;
         }
 
@@ -235,7 +237,7 @@ namespace brightboard {
             this.buf[offset + 2] = blue;
         }
 
-        getBufferColor(pixelOffset: number): number {
+        bufferColor(pixelOffset: number): number {
             pixelOffset = (pixelOffset + this._start) * this._stride;
 
             if (this._mode === ColorOrderMode.MODE_RGB) {
@@ -249,7 +251,7 @@ namespace brightboard {
          * Get the color of a pixel from the buffer. Note that this pixel color has probably 
          * been corrected for brightness.
          */
-        getBufferRGB(pixelOffset: number): number[] {
+        bufferRGB(pixelOffset: number): number[] {
             pixelOffset = (pixelOffset + this._start) * this._stride;
 
             if (this._mode === ColorOrderMode.MODE_RGB) {
@@ -358,7 +360,7 @@ namespace brightboard {
         if (pixelOffset < 0 || pixelOffset >= brightDisplay.length()) {
             return packRGB(0, 0, 0);
         } else {
-            let pixColor = brightDisplay.getBufferColor(pixelOffset);
+            let pixColor = brightDisplay.bufferColor(pixelOffset);
             if (restoreBrightness) {
                 pixColor = restoreFullBrightness(pixColor, brightDisplay._brightness);
             }
@@ -484,7 +486,7 @@ namespace brightboard {
     //% speed.max=10 speed.min=1 speed.defl=5
     //% group=patterns colPattern.shadow=variable_color_for_led
     export function fadeToPattern(colPattern: ColorPattern, speed: number): void {
-        fadeToColors(colPattern.getColors(), 10 - speed);
+        fadeToColors(colPattern.colors(), 10 - speed);
     }
 
     /**
@@ -545,7 +547,7 @@ namespace brightboard {
         if (brightness < 255) {
             let stride = brightDisplay._stride;
             for (let i = 0; i < brightDisplay.length(); i++) {
-                let rgb = brightDisplay.getBufferRGB(i);
+                let rgb = brightDisplay.bufferRGB(i);
                 brightDisplay.setBufferRGB(i * stride, (rgb[0] * brightness) >> 8, (rgb[1] * brightness) >> 8, (rgb[2] * brightness) >> 8);
             }
         }
