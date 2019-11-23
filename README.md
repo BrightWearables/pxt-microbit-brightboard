@@ -4,12 +4,13 @@
 
 ![](BrightBoardIlluminated.jpg)
 
-This extension intentionally does *not* support WS2812B addressable LEDs because [the timing required to communicate with the WS2812B LEDs is not compatible with micro:bit Bluetooth functionality](https://support.microbit.org/support/solutions/articles/19000068302-why-can-t-i-use-the-bluetooth-and-neopixel-packages-at-the-same-time-). Because the Bright Board uses SK9822/APA102 LEDs, you can program your Bright Board via Bluetooth with the micro:bit app (https://microbit.org/guide/mobile/) 
+This extension intentionally does *not* support WS2812B addressable LEDs because [the timing required to communicate with the WS2812B LEDs is not compatible with micro:bit Bluetooth functionality](https://support.microbit.org/support/solutions/articles/19000068302-why-can-t-i-use-the-bluetooth-and-neopixel-packages-at-the-same-time-). Because the Bright Board uses SK9822/APA102 LEDs, the Bright Board extension is compatible with the MakeCode micro:bit Bluetooth extension.
 
 Project and code ideas for the Bright Board may be found at https://www.brightwearables.com/learn. The Bright Board and compatible accessory bags may be purchased at https://brightwearables.com/shop.
 
 
 ## Basic usage
+
 The Bright Board MakeCode extension contains code blocks to set and manipulate the colors displayed on the twelve Bright Board LEDs. Bright Board code blocks that contain the word "show" or "fade to" will write their pattern to the LEDs when executed. If a code block doesn't contain the word "show", then it only makes changes to the buffered LED values. To make those values visible in the LEDs, you must use the "show" block.
 ```blocks
     brightDisplay.show()
