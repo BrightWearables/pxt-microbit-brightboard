@@ -84,14 +84,28 @@ namespace brightboard {
         }
 
         // fills a Buffer with the specified pattern
-        fillBufferWithPattern(buf: Buffer, stride: number = 3): void {
+        fillBufferWithPattern(buf: Buffer, mode: ColorOrderMode = ColorOrderMode.MODE_RGB, brightness: number = 255, stride: number = 3): void {
             let len = buf.length() / stride;
             let index = 0;
             for (let i = 0; i < len; i++) {
                 let rgb = this._colorList[index];
-                buf[i * stride] = (rgb >> 16) & 0XFF;
-                buf[i * stride + 1] = (rgb >> 8) & 0XFF;
-                buf[i * stride + 2] = rgb & 0XFF;
+                let r = unpackR(rgb)
+                let g = unpackG(rgb)
+                let b = unpackB(rgb)
+                if (brightness < 255) {
+                    r = (r*brightness) >> 8;
+                    g = (g*brightness) >> 8;
+                    b = (b*brightness) >> 8;
+                }
+                if (mode === ColorOrderMode.MODE_RGB) {
+                    buf[i*stride] = r;
+                    buf[i*stride+1] = g;
+                } else {
+                    buf[i*stride] = g;
+                    buf[i*stride+1] = r;
+                }
+                buf[i*stride+2] = b;
+
                 index = index + 1;
                 if (index >= this._colorList.length()) {
                     index = 0;
@@ -186,7 +200,7 @@ namespace brightboard {
     //% blockId=brightboard_set_pixel_array block="set pattern %colPattern"
     //% group=patterns colPattern.shadow=variable_color_for_led
     export function setPattern(colPattern: ColorPattern): void {
-        colPattern.fillBufferWithPattern(brightDisplay.buf);
+        colPattern.fillBufferWithPattern(brightDisplay.buf, brightDisplay.mode(), brightDisplay.brightness());
     }
 
 
@@ -224,6 +238,14 @@ namespace brightboard {
 
         length(): number {
             return this._length;
+        }
+
+        brightness(): number {
+            return this._brightness;
+        }
+
+        mode(): ColorOrderMode {
+            return this._mode;
         }
 
         setBufferRGB(offset: number, red: number, green: number, blue: number): void {
@@ -285,8 +307,7 @@ namespace brightboard {
          * Change the color of a pixel inside the buffer, adjusting for brightness
          */
         setPixelColor(pixelOffset: number, rgb: number): void {
-            if (pixelOffset < 0
-                || pixelOffset >= this._length)
+            if (pixelOffset < 0 || pixelOffset >= this._length)
                 return;
 
             pixelOffset = (pixelOffset + this._start) * this._stride;
@@ -304,6 +325,12 @@ namespace brightboard {
             this.setBufferRGB(pixelOffset, red, green, blue)
         }
 
+        /**
+         * Set the brightness value
+         */
+        setBrightness(brightVal: number) {
+            this._brightness = brightVal;
+        }
 
 		/**
 		 * Set the type of LED (neopixel or dotstar)  - currently only dotstar is available
@@ -362,7 +389,7 @@ namespace brightboard {
         } else {
             let pixColor = brightDisplay.bufferColor(pixelOffset);
             if (restoreBrightness) {
-                pixColor = restoreFullBrightness(pixColor, brightDisplay._brightness);
+                pixColor = restoreFullBrightness(pixColor, brightDisplay.brightness());
             }
             return pixColor;
         }
@@ -385,7 +412,7 @@ namespace brightboard {
 	*/
     //% blockId="brightboard_get_brightness" block="brightness"
     export function brightness(): number {
-        return brightDisplay._brightness;
+        return brightDisplay.brightness();
     }
 
     /**
@@ -395,7 +422,7 @@ namespace brightboard {
     //%blockId=brightboard_set_brightness block="set brightness %brightVal"
     //%bright.max=255 bright.min=0 group=actions weight=5		
     export function setBrightness(bright: number): void {
-        brightDisplay._brightness = bright;
+        brightDisplay.setBrightness(bright);
     }
 
 	/**
@@ -454,7 +481,7 @@ namespace brightboard {
 
         let finalColorBuf = rgbListToColorBuffer(fullPattern);
         // Adjust for brightness if necessary
-        let br = brightDisplay._brightness;
+        let br = brightDisplay.brightness();
         if (br < 255) {
             for (let i = 0; i < finalColorBuf.length; i++) {
                 finalColorBuf[i] = (finalColorBuf[i] * br) >> 8;
