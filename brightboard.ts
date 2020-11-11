@@ -85,7 +85,7 @@ namespace brightboard {
 
         // fills a Buffer with the specified pattern
         fillBufferWithPattern(buf: Buffer, mode: ColorOrderMode = ColorOrderMode.MODE_RGB, brightness: number = 255, stride: number = 3): void {
-            let len = buf.length() / stride;
+            let len = buf.length / stride;
             let index = 0;
             for (let i = 0; i < len; i++) {
                 let rgb = this._colorList[index];
