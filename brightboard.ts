@@ -107,7 +107,7 @@ namespace brightboard {
                 buf[i*stride+2] = b;
 
                 index = index + 1;
-                if (index >= this._colorList.length()) {
+                if (index >= this._colorList.length) {
                     index = 0;
                 }
             }
